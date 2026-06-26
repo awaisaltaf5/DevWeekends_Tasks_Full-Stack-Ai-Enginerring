@@ -1,4 +1,4 @@
-Here's a more general and professional README for your repository:
+
 
 # 🚀 Full Stack AI Developer Journey
 
