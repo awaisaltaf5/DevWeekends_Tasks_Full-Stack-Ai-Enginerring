@@ -1,0 +1,23 @@
+body{
+
+font-family:Arial;
+
+background:#eee;
+
+}
+
+.container{
+
+width:500px;
+
+margin:50px auto;
+
+background:white;
+
+padding:20px;
+
+text-align:center;
+
+border-radius:10px;
+
+}
