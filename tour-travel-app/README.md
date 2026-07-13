@@ -1,156 +1,339 @@
-🌍 SnapTrips — Modern Travel & Tour Booking Platform
-https://snaptour-trip.netlify.app/
-https://react.dev/
-https://vitejs.dev/
-https://tailwindcss.com/
-Live Demo: https://snaptour-trip.netlify.app/
-✨ Overview
-SnapTrips is a modern, fully responsive travel and tour booking web application built with React 18, Vite, and Tailwind CSS. It features real-time location validation, iconic photo fetching from Unsplash, dark mode support, and a polished mobile-first design.
-Key Highlights
-🔍 Real-time Location Search — Validates cities via OpenStreetMap (Nominatim) API
-📸 Iconic Photo Gallery — Fetches landmark-specific photos from Unsplash
-🌙 Dark Mode — Full theme switching with persistent state
-📱 Mobile Responsive — Optimized for all screen sizes
-⚡ Fast Performance — Built with Vite for lightning-fast HMR and builds
-🎨 Modern UI — Clean design with smooth animations and transitions
-🚀 Tech Stack
-Table
-Category	Technology
-Framework	React 18.2+
-Build Tool	Vite 5.0+
-Styling	Tailwind CSS 3.4+
-Routing	React Router DOM v6
-Icons	Lucide React
-APIs	Unsplash API, Nominatim (OpenStreetMap)
-Deployment	Netlify
-📁 Project Structure
-plain
+# 🌍 SnapTrips – Modern Travel & Tour Booking Platform
+
+A modern, fully responsive **Travel & Tour Booking** web application built with **React 18**, **Vite**, and **Tailwind CSS**. SnapTrips delivers a seamless travel planning experience with **real-time destination validation**, **live weather updates**, **iconic landmark images**, **dark mode**, and a beautiful mobile-first user interface.
+
+## 🚀 Live Demo
+
+🔗 **https://snaptour-trip.netlify.app/**
+
+---
+
+# ✨ Features
+
+* 🔍 **Real-Time Location Search**
+
+  * Validate destinations using the OpenStreetMap (Nominatim) API.
+
+* 🌤️ **Live Weather Information**
+
+  * Displays the current weather, temperature, humidity, and weather conditions for searched destinations using the OpenWeather API.
+
+* 📸 **Iconic Destination Photos**
+
+  * Fetch beautiful landmark images from the Unsplash API.
+
+* 🌙 **Dark Mode**
+
+  * Persistent theme switching across the application.
+
+* ❤️ **Favorite Destinations**
+
+  * Save and manage your favorite travel destinations.
+
+* 🎯 **Advanced Filtering & Sorting**
+
+  * Filter destinations by category and sort by popularity, rating, or price.
+
+* 📱 **Fully Responsive Design**
+
+  * Optimized for desktop, tablet, and mobile devices.
+
+* ⚡ **Lightning Fast Performance**
+
+  * Built with Vite for instant HMR and optimized production builds.
+
+* 🎨 **Modern User Interface**
+
+  * Clean layouts, smooth animations, and intuitive navigation.
+
+---
+
+# 🛠️ Tech Stack
+
+| Category   | Technology                                               |
+| ---------- | -------------------------------------------------------- |
+| Framework  | React 18                                                 |
+| Build Tool | Vite                                                     |
+| Styling    | Tailwind CSS                                             |
+| Routing    | React Router DOM v6                                      |
+| Icons      | Lucide React                                             |
+| APIs       | OpenStreetMap (Nominatim), Unsplash API, OpenWeather API |
+| Deployment | Netlify                                                  |
+
+---
+
+# 📁 Project Structure
+
+```text
 snaptrips/
-├── public/                  # Static assets
+├── public/
 ├── src/
 │   ├── components/
-│   │   ├── atoms/           # Button, Heading, LoadingSpinner
-│   │   ├── molecules/       # LoginModal, ScrollToTop
-│   │   ├── organisms/       # Navbar, Footer, Newsletter, DestinationGrid, TestimonialCarousel, PackageList
-│   │   └── templates/       # MainLayout
-│   ├── contexts/            # AuthContext, SearchContext, ThemeContext
-│   ├── data/                # Static JSON data (destinations, testimonials, packages, about)
-│   ├── pages/               # HomePage, DestinationsPage, PackagesPage, AboutPage
-│   ├── App.jsx              # Root component with routing
-│   ├── main.jsx             # Entry point
-│   └── index.css            # Global styles + Tailwind directives
-├── .env                     # Environment variables (API keys)
-├── index.html
+│   │   ├── atoms/
+│   │   ├── molecules/
+│   │   ├── organisms/
+│   │   └── templates/
+│   │
+│   ├── contexts/
+│   │   ├── AuthContext
+│   │   ├── SearchContext
+│   │   └── ThemeContext
+│   │
+│   ├── data/
+│   ├── pages/
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── index.css
+│
+├── .env
 ├── package.json
 ├── tailwind.config.js
-├── postcss.config.js
-└── vite.config.js
-🛠️ Getting Started
-Prerequisites
-Node.js 18+ and npm 9+
-Unsplash API Key (free at unsplash.com/developers)
-Installation
-bash
-# Clone the repository
-git clone https://github.com/yourusername/snaptrips.git
-cd snaptrips
+├── vite.config.js
+└── postcss.config.js
+```
 
-# Install dependencies
+---
+
+# ⚙️ Getting Started
+
+## Prerequisites
+
+* Node.js 18+
+* npm 9+
+
+---
+
+## Clone the Repository
+
+```bash
+git clone https://github.com/awaisaltaf5/SnapTrips.git
+
+cd SnapTrips
+```
+
+---
+
+## Install Dependencies
+
+```bash
 npm install
+```
 
-# Create environment file
-cp .env.example .env
-Environment Variables
-Create a .env file in the root directory:
-env
-# Unsplash API Access Key (required for iconic photo fetching)
-VITE_UNSPLASH_ACCESS_KEY=your_unsplash_access_key_here
-⚠️ Note: The app works without the Unsplash key but will use fallback images instead of iconic landmark photos.
-Run Development Server
-bash
+---
+
+## Environment Variables
+
+Create a `.env` file in the project root.
+
+```env
+VITE_UNSPLASH_ACCESS_KEY=your_unsplash_access_key
+VITE_OPENWEATHER_API_KEY=your_openweather_api_key
+```
+
+> **Note:** If the Unsplash API key is not provided, the application will automatically use fallback destination images.
+
+---
+
+## Run the Development Server
+
+```bash
 npm run dev
-Open http://localhost:5173 in your browser.
-Build for Production
-bash
-npm run build
-🌐 Deployment (Netlify)
-This project is deployed on Netlify. To deploy your own:
-Build the project:
-bash
-npm run build
-Deploy to Netlify:
-Drag and drop the dist/ folder to Netlify Drop
-Or connect your GitHub repo for continuous deployment
-Add environment variables in Netlify Dashboard → Site Settings → Environment Variables:
-plain
-VITE_UNSPLASH_ACCESS_KEY = your_key_here
-📸 Features in Detail
-🏠 Home Page
-Full-screen hero with search bar (destination, date, guests)
-Popular destination quick-tags
-Guest dropdown with +/- controls
-Destination cards grid
-Testimonial carousel with auto-play
-Newsletter signup section
-🗺️ Destinations Page
-Auto-scroll on page load (pauses on interaction, resumes after 5s)
-Real-time search with location validation
-Iconic photo gallery fetched from Unsplash
-Category filtering (All, City, Beach, Mountain, Trending)
-Sort options (Popular, Rating, Price)
-Favorite/save destinations
-Empty state with clear filters
-📦 Packages Page
-Curated tour packages listing
-Package details with pricing
-Filter and sort capabilities
-ℹ️ About Page
-Company story and mission
-Statistics counter
-Core values cards
-Team member profiles
-Trust badges and awards
-Call-to-action section
-🧩 Shared Components
-Navbar — Fixed top, scroll shadow, active link indicator, full-screen mobile menu
-Footer — Newsletter signup, social links, site map, contact info
-Scroll-to-Top — Appears after 400px scroll
-Login Modal — Authentication UI (context-managed)
-Dark Mode Toggle — Persistent theme switching
-🔌 API Integrations
-Table
-API	Purpose	Endpoint
-Unsplash	Fetch iconic landmark photos	api.unsplash.com/search/photos
-Nominatim	Validate real-world locations	nominatim.openstreetmap.org/search
-🎨 Design System
-Colors
-Primary: Teal (#14b8a6)
-Primary Light: Light Teal (#5eead4)
-Primary Dark: Dark Teal (#0f766e)
-Secondary: Amber (#f59e0b)
-Background: White / Dark Gray (#111827)
-Typography
-Headings: Inter / system-ui, bold weights
-Body: Inter / system-ui, regular weights
-Responsive scaling: text-3xl mobile → text-5xl desktop
-Spacing
-Container max-width: Custom container-custom class
-Section padding: py-12 mobile → py-20 desktop
-Card gap: gap-6 (24px)
+```
 
-🐛 Known Issues & TODOs
-[ ] Add real backend for user authentication
-[ ] Implement booking/payment flow
-[ ] Add map integration (Leaflet/Google Maps)
-[ ] Create user dashboard for saved favorites
-[ ] Add multi-language support (i18n)
-[ ] Implement service worker for offline support
-📄 License
-This project is licensed under the MIT License.
-🙏 Acknowledgments
-Unsplash for the beautiful travel photography
-OpenStreetMap / Nominatim for geocoding services
-Lucide for the icon library
-Tailwind CSS for the utility-first styling
-👤 Author
-Muhammad Awais Altaf
+Open:
+
+```text
+http://localhost:5173
+```
+
+---
+
+## Build for Production
+
+```bash
+npm run build
+```
+
+---
+
+# 🌐 Deployment
+
+SnapTrips is deployed on **Netlify**.
+
+### Live Demo
+
+https://snaptour-trip.netlify.app/
+
+To deploy your own version:
+
+```bash
+npm run build
+```
+
+Then either:
+
+* Upload the **dist** folder to Netlify Drop.
+* Connect your GitHub repository for automatic deployments.
+
+Remember to add the required environment variables inside your Netlify project settings.
+
+---
+
+# 📸 Pages
+
+## 🏠 Home
+
+* Full-screen hero section
+* Destination search
+* Popular destination tags
+* Guest selector
+* Featured destinations
+* Testimonial carousel
+* Newsletter subscription
+
+---
+
+## 🗺️ Destinations
+
+* Real-time destination validation
+* Live weather information
+* Iconic destination images
+* Category filters
+* Search functionality
+* Sorting options
+* Favorite destinations
+* Empty state handling
+
+---
+
+## 📦 Packages
+
+* Curated travel packages
+* Package pricing
+* Filters and sorting
+* Responsive cards
+
+---
+
+## ℹ️ About
+
+* Company story
+* Mission & Vision
+* Statistics
+* Team members
+* Core values
+* Trust badges
+
+---
+
+# 🧩 Shared Components
+
+* Responsive Navbar
+* Footer
+* Scroll-to-Top Button
+* Login Modal
+* Dark Mode Toggle
+* Newsletter Section
+* Destination Cards
+* Package Cards
+* Testimonial Carousel
+
+---
+
+# 🔌 API Integrations
+
+| API                       | Purpose                                                                |
+| ------------------------- | ---------------------------------------------------------------------- |
+| OpenStreetMap (Nominatim) | Validate searched locations                                            |
+| Unsplash API              | Fetch iconic landmark images                                           |
+| OpenWeather API           | Display current weather, temperature, humidity, and weather conditions |
+
+---
+
+# 🎨 Design System
+
+## Colors
+
+| Color           | Value     |
+| --------------- | --------- |
+| Primary         | `#14b8a6` |
+| Primary Light   | `#5eead4` |
+| Primary Dark    | `#0f766e` |
+| Secondary       | `#f59e0b` |
+| Dark Background | `#111827` |
+
+### Typography
+
+* Inter
+* system-ui
+
+### Layout
+
+* Mobile-first approach
+* Responsive Grid
+* Custom container width
+* Consistent spacing
+
+---
+
+# ✅ Features Checklist
+
+* ✅ Real-time destination validation
+* ✅ Live weather updates
+* ✅ Iconic destination photos
+* ✅ Responsive design
+* ✅ Dark mode
+* ✅ Mobile navigation
+* ✅ Favorite destinations
+* ✅ Category filtering
+* ✅ Sorting options
+* ✅ Scroll-to-top button
+* ✅ Testimonial carousel
+* ✅ Newsletter section
+
+---
+
+# 🚀 Future Improvements
+
+* User Authentication
+* Booking & Payment Integration
+* Interactive Maps (Google Maps / Leaflet)
+* User Dashboard
+* Saved Trips
+* Booking History
+* Multi-language Support (i18n)
+* Progressive Web App (PWA)
+* Backend API Integration
+
+---
+
+# 📄 License
+
+This project is licensed under the **MIT License**.
+
+---
+
+# 🙏 Acknowledgements
+
+Special thanks to the following amazing tools and services:
+
+* React
+* Vite
+* Tailwind CSS
+* Unsplash
+* OpenStreetMap (Nominatim)
+* OpenWeather API
+* Lucide React
+* Netlify
+
+---
+
+# 👨‍💻 Author
+
+## Muhammad Awais Altaf
+
+* GitHub: https://github.com/awaisaltaf5
+
+---
+
+⭐ **If you like this project, consider giving it a star on GitHub!**
