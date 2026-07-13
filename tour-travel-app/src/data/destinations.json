@@ -1,0 +1,68 @@
+[
+  {
+    "id": 1,
+    "name": "Santorini",
+    "country": "Greece",
+    "image": "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=600&h=400&fit=crop&q=80",
+    "price": 1299,
+    "rating": 4.8,
+    "reviews": 234,
+    "badge": "Hot Deal",
+    "badgeColor": "secondary"
+  },
+  {
+    "id": 2,
+    "name": "Bali",
+    "country": "Indonesia",
+    "image": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&h=400&fit=crop&q=80",
+    "price": 899,
+    "rating": 4.7,
+    "reviews": 189,
+    "badge": "Popular",
+    "badgeColor": "primary"
+  },
+  {
+    "id": 3,
+    "name": "Kyoto",
+    "country": "Japan",
+    "image": "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600&h=400&fit=crop&q=80",
+    "price": 1599,
+    "rating": 4.9,
+    "reviews": 312,
+    "badge": null,
+    "badgeColor": null
+  },
+  {
+    "id": 4,
+    "name": "Machu Picchu",
+    "country": "Peru",
+    "image": "https://images.unsplash.com/photo-1587595431973-160d0d94add1?w=600&h=400&fit=crop&q=80",
+    "price": 1899,
+    "rating": 4.6,
+    "reviews": 156,
+    "badge": "Adventure",
+    "badgeColor": "dark"
+  },
+  {
+    "id": 5,
+    "name": "Maldives",
+    "country": "Maldives",
+    "image": "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=600&h=400&fit=crop&q=80",
+    "price": 2499,
+    "rating": 4.9,
+    "reviews": 278,
+    "badge": "Luxury",
+    "badgeColor": "secondary"
+  },
+  {
+    "id": 6,
+    "name": "Swiss Alps",
+    "country": "Switzerland",
+    "image": "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=600&h=400&fit=crop&q=80",
+    "price": 1799,
+    "rating": 4.7,
+    "reviews": 198,
+    "badge": null,
+    "badgeColor": null
+  }
+]

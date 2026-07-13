@@ -1,0 +1,56 @@
+{
+  "stats": [
+    { "number": "50K+", "label": "Happy Travelers" },
+    { "number": "120+", "label": "Destinations" },
+    { "number": "15", "label": "Years Experience" },
+    { "number": "4.9", "label": "Average Rating" }
+  ],
+  "values": [
+    {
+      "title": "Authentic Experiences",
+      "description": "We curate genuine local experiences that connect you with cultures, not just landmarks.",
+      "icon": "Compass"
+    },
+    {
+      "title": "Sustainable Travel",
+      "description": "Every trip is designed with environmental responsibility and community support in mind.",
+      "icon": "Leaf"
+    },
+    {
+      "title": "Expert Guides",
+      "description": "Our local guides are passionate storytellers who bring destinations to life.",
+      "icon": "Users"
+    },
+    {
+      "title": "24/7 Support",
+      "description": "Travel with peace of mind knowing our team is always just a call away.",
+      "icon": "Headphones"
+    }
+  ],
+  "team": [
+    {
+      "name": "Alexandra Chen",
+      "role": "Founder & CEO",
+      "image": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&h=300&fit=crop&q=80",
+      "bio": "Former travel journalist with 20 years of exploring 80+ countries."
+    },
+    {
+      "name": "Marcus Johnson",
+      "role": "Head of Operations",
+      "image": "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300&h=300&fit=crop&q=80",
+      "bio": "Logistics expert who ensures every journey runs like clockwork."
+    },
+    {
+      "name": "Priya Sharma",
+      "role": "Lead Experience Designer",
+      "image": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=300&h=300&fit=crop&q=80",
+      "bio": "Cultural anthropologist crafting immersive local experiences."
+    },
+    {
+      "name": "David Kim",
+      "role": "Customer Success",
+      "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&q=80",
+      "bio": "Dedicated to making every traveler feel like family."
+    }
+  ]
+}

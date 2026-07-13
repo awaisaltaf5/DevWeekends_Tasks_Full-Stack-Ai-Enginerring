@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "title": "European Explorer",
+    "image": "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=600&h=400&fit=crop&q=80",
+    "duration": "12 Days",
+    "locations": ["Paris", "Rome", "Barcelona", "Amsterdam"],
+    "price": 2499,
+    "originalPrice": 2899,
+    "rating": 4.8,
+    "reviews": 156,
+    "badge": "Best Seller",
+    "highlights": ["Eiffel Tower visit", "Colosseum guided tour", "Sagrada Familia skip-line", "Canal cruise"],
+    "groupSize": "15-20 people"
+  },
+  {
+    "id": 2,
+    "title": "Asian Heritage Trail",
+    "image": "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=600&h=400&fit=crop&q=80",
+    "duration": "10 Days",
+    "locations": ["Bangkok", "Angkor Wat", "Hanoi", "Halong Bay"],
+    "price": 1899,
+    "originalPrice": 2199,
+    "rating": 4.7,
+    "reviews": 203,
+    "badge": "Cultural",
+    "highlights": ["Temple hopping", "Street food tour", "Overnight cruise", "Cooking class"],
+    "groupSize": "10-15 people"
+  },
+  {
+    "id": 3,
+    "title": "African Safari Adventure",
+    "image": "https://images.unsplash.com/photo-1516426122078-c23e76319801?w=600&h=400&fit=crop&q=80",
+    "duration": "8 Days",
+    "locations": ["Nairobi", "Masai Mara", "Serengeti", "Zanzibar"],
+    "price": 3299,
+    "originalPrice": 3699,
+    "rating": 4.9,
+    "reviews": 89,
+    "badge": "Adventure",
+    "highlights": ["Big Five game drives", "Hot air balloon ride", "Maasai village visit", "Beach extension"],
+    "groupSize": "8-12 people"
+  },
+  {
+    "id": 4,
+    "title": "South American Wonders",
+    "image": "https://images.unsplash.com/photo-1587595431973-160d0d94add1?w=600&h=400&fit=crop&q=80",
+    "duration": "14 Days",
+    "locations": ["Lima", "Cusco", "Machu Picchu", "Rio de Janeiro"],
+    "price": 2899,
+    "originalPrice": 3299,
+    "rating": 4.6,
+    "reviews": 134,
+    "badge": "Trending",
+    "highlights": ["Inca Trail trek", "Christ the Redeemer", "Amazon jungle stay", "Wine tasting"],
+    "groupSize": "12-18 people"
+  }
+]

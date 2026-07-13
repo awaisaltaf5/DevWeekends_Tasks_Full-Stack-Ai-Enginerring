@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "name": "Sarah Mitchell",
+    "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&q=80",
+    "location": "New York, USA",
+    "rating": 5,
+    "text": "SnapTrips made our honeymoon absolutely magical! The European Explorer package was perfectly organized. Every hotel, every tour, every meal was beyond our expectations. Can't wait to book our next adventure!",
+    "trip": "European Explorer",
+    "date": "March 2026"
+  },
+  {
+    "id": 2,
+    "name": "James Chen",
+    "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&q=80",
+    "location": "Toronto, Canada",
+    "rating": 5,
+    "text": "The Asian Heritage Trail was a life-changing experience. Our guide in Angkor Wat was incredibly knowledgeable, and the street food tour in Bangkok was the highlight of the trip. Highly recommend!",
+    "trip": "Asian Heritage Trail",
+    "date": "January 2026"
+  },
+  {
+    "id": 3,
+    "name": "Emma Rodriguez",
+    "avatar": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&q=80",
+    "location": "Madrid, Spain",
+    "rating": 4,
+    "text": "Amazing safari experience! Seeing the Big Five in their natural habitat was breathtaking. The hot air balloon ride over the Serengeti at sunrise is something I'll never forget. Small group size made it feel intimate.",
+    "trip": "African Safari Adventure",
+    "date": "February 2026"
+  },
+  {
+    "id": 4,
+    "name": "Ali",
+    "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&q=80",
+    "location": "Islamabad, Pakistan",
+    "rating": 5,
+    "text": "Machu Picchu has been on my bucket list forever, and SnapTrips made it happen flawlessly. The Inca Trail trek was challenging but so rewarding. The guides were supportive and the pacing was perfect.",
+    "trip": "South American Wonders",
+    "date": "December 2025"
+  },
+  {
+    "id": 5,
+    "name": "Priya Sharma",
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&q=80",
+    "location": "Mumbai, India",
+    "rating": 5,
+    "text": "Best travel company I've ever used! The attention to detail is incredible. From airport pickups to restaurant reservations, everything was seamless. The Maldives luxury package was pure paradise.",
+    "trip": "Maldives Luxury",
+    "date": "April 2026"
+  }
+]
