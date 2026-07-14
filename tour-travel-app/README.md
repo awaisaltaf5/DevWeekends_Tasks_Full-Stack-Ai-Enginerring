@@ -4,7 +4,7 @@ A modern, fully responsive **Travel & Tour Booking** web application built with 
 
 ## 🚀 Live Demo
 
-🔗 **https://snaptour-trip.netlify.app/**
+🔗 **https://tour-travel-app-psi.vercel.app/**
 
 ---
 
@@ -58,7 +58,7 @@ A modern, fully responsive **Travel & Tour Booking** web application built with 
 | Routing    | React Router DOM v6                                      |
 | Icons      | Lucide React                                             |
 | APIs       | OpenStreetMap (Nominatim), Unsplash API, OpenWeather API |
-| Deployment | Netlify                                                  |
+| Deployment | Vercel                                                   |
 
 ---
 
@@ -158,11 +158,11 @@ npm run build
 
 # 🌐 Deployment
 
-SnapTrips is deployed on **Netlify**.
+SnapTrips is deployed on **Vercel**.
 
 ### Live Demo
 
-https://snaptour-trip.netlify.app/
+[https://snaptour-trip.netlify.app/](https://tour-travel-app-psi.vercel.app/)
 
 To deploy your own version:
 
@@ -324,7 +324,7 @@ Special thanks to the following amazing tools and services:
 * OpenStreetMap (Nominatim)
 * OpenWeather API
 * Lucide React
-* Netlify
+* Vercel
 
 ---
 
