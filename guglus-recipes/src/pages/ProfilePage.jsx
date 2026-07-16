@@ -15,19 +15,6 @@ const TABS = [
   { id: 'cooked', label: 'Recipes', icon: ChefHat },
 ]
 
-// Shared stagger container for grids - purely cosmetic, no logic change
-const gridContainer = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.05 },
-  },
-}
-const gridItem = {
-  hidden: { opacity: 0, y: 12 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.25 } },
-}
-
 export default function ProfilePage() {
   const {
     bookmarks,
@@ -69,18 +56,18 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen pb-24 md:pb-10 bg-background dark:bg-dark-background">
+    <div className="min-h-screen pb-24 md:pb-8 bg-background dark:bg-dark-background">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-background/80 dark:bg-dark-background/95 backdrop-blur-lg border-b border-border/50 dark:border-dark-border/50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3.5 sm:py-4 flex items-center justify-between">
-          <h1 className="text-lg sm:text-xl font-bold text-text-primary dark:text-dark-text-primary">
+      <header className="sticky top-0 z-40 bg-background/80 dark:bg-dark-background/80 backdrop-blur-lg border-b border-border/50 dark:border-dark-border/50">
+        <div className="max-w-4xl mx-auto px-4 md:px-6 py-4 flex items-center justify-between">
+          <h1 className="text-xl font-bold text-text-primary dark:text-dark-text-primary">
             Profile
           </h1>
           <ThemeToggle />
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-5 sm:py-6 space-y-5 sm:space-y-6">
+      <main className="max-w-4xl mx-auto px-4 md:px-6 py-6 space-y-6">
         {/* User Bio with Image Upload */}
         <UserBioCard 
           user={userWithStats} 
@@ -93,37 +80,22 @@ export default function ProfilePage() {
           onImageRemove={removeAvatar}
         />
 
-        {/* Tabs - horizontally scrollable on small screens so it never wraps/overflows */}
-        <div className="-mx-4 px-4 sm:mx-0 sm:px-0 overflow-x-auto scrollbar-hide">
-          <div className="flex gap-2 w-max sm:w-auto min-w-full sm:min-w-0">
-            {TABS.map(({ id, label, icon: Icon }) => {
-              const isActive = activeTab === id
-              return (
-                <button
-                  key={id}
-                  onClick={() => setActiveTab(id)}
-                  className={`relative flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-colors duration-150 ${
-                    isActive
-                      ? 'bg-primary dark:bg-dark-primary text-white dark:text-dark-background shadow-md'
-                      : 'bg-card dark:bg-dark-card border border-border dark:border-dark-border text-text-secondary dark:text-dark-text-secondary hover:text-text-primary dark:hover:text-dark-text-primary hover:border-primary/40 dark:hover:border-dark-primary/40'
-                  }`}
-                >
-                  <Icon size={16} className="shrink-0" />
-                  <span>{label}</span>
-                  {id === 'collections' && collections.length > 0 && (
-                    <span className={`ml-0.5 text-xs font-semibold ${isActive ? 'text-white/80 dark:text-dark-background/70' : 'text-text-secondary/70 dark:text-dark-text-secondary/70'}`}>
-                      {collections.length}
-                    </span>
-                  )}
-                  {id === 'saved' && bookmarks.length > 0 && (
-                    <span className={`ml-0.5 text-xs font-semibold ${isActive ? 'text-white/80 dark:text-dark-background/70' : 'text-text-secondary/70 dark:text-dark-text-secondary/70'}`}>
-                      {bookmarks.length}
-                    </span>
-                  )}
-                </button>
-              )
-            })}
-          </div>
+        {/* Tabs */}
+        <div className="flex gap-2">
+          {TABS.map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              onClick={() => setActiveTab(id)}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 ${
+                activeTab === id
+                  ? 'bg-primary dark:bg-dark-primary text-white dark:text-dark-background shadow-md'
+                  : 'bg-card dark:bg-dark-card border border-border dark:border-dark-border text-text-secondary dark:text-dark-text-secondary hover:text-text-primary dark:hover:text-dark-text-primary'
+              }`}
+            >
+              <Icon size={16} />
+              {label}
+            </button>
+          ))}
         </div>
 
         {/* Tab Content */}
@@ -136,17 +108,16 @@ export default function ProfilePage() {
           {/* Collections Tab */}
           {activeTab === 'collections' && (
             <div>
-              <div className="flex items-center justify-between gap-3 mb-4">
-                <h2 className="text-base sm:text-lg font-bold text-text-primary dark:text-dark-text-primary">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-text-primary dark:text-dark-text-primary">
                   My Collections
                 </h2>
                 <button
                   onClick={() => setShowCreateModal(true)}
-                  className="flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-primary dark:bg-dark-primary text-white dark:text-dark-background text-xs sm:text-sm font-semibold hover:shadow-lg active:scale-[0.97] transition-all shrink-0"
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary dark:bg-dark-primary text-white dark:text-dark-background text-sm font-medium hover:shadow-lg transition-shadow"
                 >
                   <Plus size={16} />
-                  <span className="hidden xs:inline sm:inline">New Collection</span>
-                  <span className="inline xs:hidden sm:hidden">New</span>
+                  New Collection
                 </button>
               </div>
 
@@ -156,21 +127,15 @@ export default function ProfilePage() {
                   submessage="Create your first collection to organize recipes" 
                 />
               ) : (
-                <motion.div
-                  variants={gridContainer}
-                  initial="hidden"
-                  animate="show"
-                  className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4"
-                >
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {collections.map(collection => (
-                    <motion.div key={collection.id} variants={gridItem}>
-                      <CollectionFolder
-                        collection={collection}
-                        onDelete={deleteCollection}
-                      />
-                    </motion.div>
+                    <CollectionFolder
+                      key={collection.id}
+                      collection={collection}
+                      onDelete={deleteCollection}
+                    />
                   ))}
-                </motion.div>
+                </div>
               )}
             </div>
           )}
@@ -178,7 +143,7 @@ export default function ProfilePage() {
           {/* Saved Tab */}
           {activeTab === 'saved' && (
             <div>
-              <h2 className="text-base sm:text-lg font-bold text-text-primary dark:text-dark-text-primary mb-4">
+              <h2 className="text-lg font-bold text-text-primary dark:text-dark-text-primary mb-4">
                 Saved Recipes
               </h2>
               {bookmarks.length === 0 ? (
@@ -187,18 +152,11 @@ export default function ProfilePage() {
                   submessage="Bookmark recipes you love to see them here" 
                 />
               ) : (
-                <motion.div
-                  variants={gridContainer}
-                  initial="hidden"
-                  animate="show"
-                  className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4"
-                >
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {bookmarks.map(recipe => (
-                    <motion.div key={recipe.idMeal} variants={gridItem}>
-                      <RecipeCard recipe={recipe} />
-                    </motion.div>
+                    <RecipeCard key={recipe.idMeal} recipe={recipe} />
                   ))}
-                </motion.div>
+                </div>
               )}
             </div>
           )}
@@ -206,7 +164,7 @@ export default function ProfilePage() {
           {/* Recipes/Cooked Tab */}
           {activeTab === 'cooked' && (
             <div>
-              <h2 className="text-base sm:text-lg font-bold text-text-primary dark:text-dark-text-primary mb-4">
+              <h2 className="text-lg font-bold text-text-primary dark:text-dark-text-primary mb-4">
                 Recipes You've Cooked
               </h2>
               <EmptyState 
@@ -242,7 +200,7 @@ export default function ProfilePage() {
           <button
             onClick={handleCreateCollection}
             disabled={!newCollectionName.trim()}
-            className="w-full btn-primary flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full btn-primary flex items-center justify-center gap-2 disabled:opacity-50"
           >
             <Save size={18} />
             Create Collection
@@ -285,7 +243,7 @@ export default function ProfilePage() {
           <button
             onClick={handleUpdateUser}
             disabled={!editName.trim()}
-            className="w-full btn-primary flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full btn-primary flex items-center justify-center gap-2 disabled:opacity-50"
           >
             <Save size={18} />
             Save Changes
