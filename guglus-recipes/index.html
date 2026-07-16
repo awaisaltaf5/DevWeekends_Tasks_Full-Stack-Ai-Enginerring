@@ -2,9 +2,45 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <meta name="theme-color" content="#FEFAE0" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1A1A2E" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="Guglu's Recipes — discover flavors from around the world." />
+
     <link rel="icon" type="image/svg+xml" href="/favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Warm up the connection to the image CDN before React even mounts,
+         so the hero image's DNS/TLS handshake isn't blocking the request -->
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+    <link rel="dns-prefetch" href="https://images.unsplash.com" />
+
+    <!-- Preload the actual LCP image at the size/format the page requests,
+         so the browser starts fetching it in parallel with JS parsing
+         instead of waiting for React to render the <img> tag -->
+    <link
+      rel="preload"
+      as="image"
+      href="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&q=80&auto=format"
+      imagesrcset="
+        https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=80&auto=format 400w,
+        https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80&auto=format 800w,
+        https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&q=80&auto=format 1200w,
+        https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1600&q=80&auto=format 1600w"
+      imagesizes="100vw"
+      fetchpriority="high"
+    />
+
     <title>Guglu's Recipes</title>
+
+    <!-- Inline background color so the page isn't a white flash before
+         Tailwind's CSS loads and paints the real background -->
+    <style>
+      html, body { background: #FEFAE0; }
+      @media (prefers-color-scheme: dark) {
+        html, body { background: #1A1A2E; }
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
