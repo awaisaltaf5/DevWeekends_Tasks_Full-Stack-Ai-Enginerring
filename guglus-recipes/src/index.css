@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@layer base {
+  body {
+    @apply font-sans antialiased;
+    @apply bg-background text-text-primary;
+    @apply transition-colors duration-300;
+  }
+
+  /* Dark mode overrides */
+  html.dark body {
+    @apply bg-dark-background text-dark-text-primary;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-6 py-3 rounded-2xl font-semibold text-white bg-primary hover:bg-primary-hover transition-all duration-200 shadow-lg hover:shadow-xl active:scale-95;
+  }
+
+  .btn-primary-dark {
+    @apply px-6 py-3 rounded-2xl font-semibold text-dark-background bg-dark-primary hover:bg-dark-primary-hover transition-all duration-200 shadow-lg hover:shadow-xl active:scale-95;
+  }
+
+  .card {
+    @apply bg-card rounded-3xl shadow-md border border-border overflow-hidden transition-all duration-200 hover:shadow-lg;
+  }
+
+  .dark .card {
+    @apply bg-dark-card border-dark-border;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 rounded-2xl border border-border bg-card text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200;
+  }
+
+  .dark .input-field {
+    @apply bg-dark-card border-dark-border text-dark-text-primary placeholder-dark-text-secondary focus:ring-dark-primary;
+  }
+}
+
+/* Hide scrollbar for category pills */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
