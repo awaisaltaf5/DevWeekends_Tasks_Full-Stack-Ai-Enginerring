@@ -70,23 +70,26 @@ export default function FilterModal({ isOpen, onClose, onApply, currentFilters =
   ].reduce((a, b) => a + b, 0)
 
   const getButtonClass = (isSelected) => {
-    const base = 'flex items-center justify-center gap-2 px-3 py-2.5 md:py-3 rounded-xl text-xs md:text-sm font-medium transition-all duration-200 w-full '
+    const base = 'flex items-center justify-center gap-2 px-3 py-2.5 md:py-3 rounded-xl text-xs md:text-sm font-medium transition-colors duration-150 w-full '
     
     if (isSelected) {
       return base + 'bg-primary dark:bg-dark-primary text-white dark:text-[#1A1A2E] shadow-md border-2 border-primary dark:border-dark-primary'
     }
     
-    return base + 'bg-background dark:bg-dark-background/80 border-2 border-border dark:border-dark-border/60 text-text-secondary dark:text-dark-text-secondary hover:border-primary/50 dark:hover:border-dark-primary/50'
+    // NOTE: solid dark background (no /80 translucency) - translucent layers stacked
+    // under a transform-animated fixed container are what caused the dark-mode
+    // GPU compositor corruption ("scattered" render) on Android Chrome/WebView.
+    return base + 'bg-background dark:bg-dark-background border-2 border-border dark:border-dark-border text-text-secondary dark:text-dark-text-secondary hover:border-primary/50 dark:hover:border-dark-primary/50'
   }
 
   const getHealthButtonClass = (isSelected) => {
-    const base = 'flex items-center gap-2 px-3 py-2.5 md:py-3 rounded-xl text-xs md:text-sm font-medium transition-all duration-200 w-full '
+    const base = 'flex items-center gap-2 px-3 py-2.5 md:py-3 rounded-xl text-xs md:text-sm font-medium transition-colors duration-150 w-full '
     
     if (isSelected) {
       return base + 'bg-primary dark:bg-dark-primary text-white dark:text-[#1A1A2E] shadow-md border-2 border-primary dark:border-dark-primary'
     }
     
-    return base + 'bg-background dark:bg-dark-background/80 border-2 border-border dark:border-dark-border/60 text-text-secondary dark:text-dark-text-secondary hover:border-primary/50 dark:hover:border-dark-primary/50'
+    return base + 'bg-background dark:bg-dark-background border-2 border-border dark:border-dark-border text-text-secondary dark:text-dark-text-secondary hover:border-primary/50 dark:hover:border-dark-primary/50'
   }
 
   return (
@@ -94,22 +97,32 @@ export default function FilterModal({ isOpen, onClose, onApply, currentFilters =
       {isOpen && (
         <>
           {/* Backdrop */}
+          {/* FIX: removed backdrop-blur-sm. blur-filter + fixed + a sibling transform-
+              animated element is the classic Android Chrome compositor bug that produces
+              "scattered/garbled" repaints, and it's far more visible in dark mode because
+              of the extra translucent layers. A plain solid-ish overlay looks nearly
+              identical and is also cheaper to paint (loads/animates faster). */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-black/70 z-50"
           />
           
           {/* Bottom Sheet Container */}
-          {/* NOTICE: added mb-16 (or mb-[68px]) for mobile screen so it sits perfectly above the nav tab bar, and md:mb-0 to reset on large layouts */}
+          {/* FIX: added transform-gpu + will-change-transform + isolate so this gets its
+              own stable compositor layer instead of bleeding into the page behind it,
+              plus a CSS containment hint so the browser only repaints this box (helps
+              both the corruption issue and load/animation speed). */}
           <motion.div
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed inset-x-0 bottom-0 mb-[64px] md:mb-0 z-50 bg-card dark:bg-dark-card rounded-t-[28px] md:rounded-t-3xl md:max-w-lg md:mx-auto md:left-1/2 md:-translate-x-1/2 md:w-full shadow-2xl flex flex-col max-h-[75vh] md:max-h-[90vh]"
+            transition={{ type: 'spring', damping: 30, stiffness: 340 }}
+            style={{ contain: 'content' }}
+            className="fixed inset-x-0 bottom-0 mb-[64px] md:mb-0 z-50 bg-card dark:bg-dark-card rounded-t-[28px] md:rounded-t-3xl md:max-w-lg md:mx-auto md:left-1/2 md:-translate-x-1/2 md:w-full shadow-2xl flex flex-col max-h-[75vh] md:max-h-[90vh] transform-gpu will-change-transform isolate overflow-hidden"
           >
             {/* Drag Handle */}
             <div className="flex justify-center pt-2.5 pb-1 shrink-0">
@@ -117,7 +130,7 @@ export default function FilterModal({ isOpen, onClose, onApply, currentFilters =
             </div>
 
             {/* Header */}
-            <div className="flex items-center justify-between px-4 md:px-5 py-3 border-b border-border dark:border-dark-border shrink-0">
+            <div className="flex items-center justify-between px-4 md:px-5 py-3 border-b border-border dark:border-dark-border shrink-0 bg-card dark:bg-dark-card">
               <div className="flex items-center gap-2.5">
                 <div className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-primary/10 dark:bg-dark-primary/10 flex items-center justify-center shrink-0">
                   <SlidersHorizontal size={18} className="text-primary dark:text-dark-primary" />
@@ -146,7 +159,7 @@ export default function FilterModal({ isOpen, onClose, onApply, currentFilters =
             </div>
 
             {/* Scrollable Content */}
-            <div className="flex-1 min-h-0 overflow-y-auto px-4 md:px-5 py-4 space-y-5 md:space-y-6">
+            <div className="flex-1 min-h-0 overflow-y-auto px-4 md:px-5 py-4 space-y-5 md:space-y-6 bg-card dark:bg-dark-card">
               
               {/* Diet Type */}
               <section>
