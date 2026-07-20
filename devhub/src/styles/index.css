@@ -1,11 +1,21 @@
+/* ============================================
+   TAILWIND DIRECTIVES
+   ============================================ */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Custom base styles */
+/* ============================================
+   CUSTOM BASE STYLES
+   ============================================ */
+
 @layer base {
   html {
     scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
   
   body {
@@ -17,24 +27,61 @@
     @apply bg-gray-900 text-gray-100;
   }
 
-  /* Custom scrollbar for webkit browsers */
+  /* Improved selection colors */
+  ::selection {
+    @apply bg-blue-200/60 dark:bg-blue-800/60 text-blue-900 dark:text-blue-100;
+  }
+
+  /* Custom scrollbar for webkit browsers (global) */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-gray-100 dark:bg-gray-800;
+    @apply bg-transparent;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+    @apply bg-gray-300 dark:bg-gray-600 rounded-full border-2 border-transparent bg-clip-content;
   }
 
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-gray-400 dark:bg-gray-500;
   }
+
+  /* Improved focus styles for accessibility */
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-blue-500 dark:outline-blue-400;
+    outline-style: solid;
+  }
+
+  a, button {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Prevent text selection on rapid taps */
+  a:active, button:active {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Smoother transitions for all interactive elements */
+  a, button, input, select, textarea {
+    @apply transition-all duration-200 ease-in-out;
+  }
+
+  /* Improve image rendering */
+  img {
+    @apply object-cover;
+    image-rendering: auto;
+  }
 }
+
+/* ============================================
+   CUSTOM COMPONENTS
+   ============================================ */
 
 @layer components {
   /* Skeleton loading shimmer effect */
@@ -58,7 +105,35 @@
     );
     background-size: 200% 100%;
   }
+
+  /* Card hover lift effect */
+  .card-hover {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .card-hover:hover {
+    @apply -translate-y-0.5 shadow-md;
+  }
+
+  /* Animated underline for nav links */
+  .nav-underline {
+    @apply relative;
+  }
+
+  .nav-underline::after {
+    content: '';
+    @apply absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-blue-600 dark:bg-blue-400 rounded-full transition-all duration-300;
+  }
+
+  .nav-underline:hover::after,
+  .nav-underline.active::after {
+    @apply w-1/2;
+  }
 }
+
+/* ============================================
+   CUSTOM UTILITIES
+   ============================================ */
 
 @layer utilities {
   /* Text truncation utilities */
@@ -75,4 +150,150 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+
+  /* Thin scrollbar utility */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.5);
+    border-radius: 20px;
+    border: none;
+  }
+
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: rgba(75, 85, 99, 0.5);
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(156, 163, 175, 0.8);
+  }
+
+  /* Hide scrollbar utility */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Safe area padding for mobile devices */
+  .safe-area-pb {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Glass morphism utility */
+  .glass {
+    @apply bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl;
+  }
+
+  /* Gradient text utility */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600;
+  }
+
+  /* Animation delay utilities */
+  .animation-delay-100 {
+    animation-delay: 100ms;
+  }
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+  .animation-delay-300 {
+    animation-delay: 300ms;
+  }
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+  .animation-delay-500 {
+    animation-delay: 500ms;
+  }
+}
+
+/* ============================================
+   KEYFRAME ANIMATIONS
+   ============================================ */
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  0% {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Auto-scrolling reel animation */
+@keyframes slideReel {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-slideReel {
+  animation: slideReel 30s linear infinite;
 }

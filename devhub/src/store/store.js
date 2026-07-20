@@ -12,6 +12,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
+        // Ignore non-serializable values in specific actions
         ignoredActions: [],
       },
     }),
