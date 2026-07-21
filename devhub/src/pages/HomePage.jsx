@@ -112,7 +112,7 @@ function HomePage() {
             </p>
 
             <div className="max-w-2xl mx-auto mb-1 sm:mb-2 md:mb-8">
-              <SearchBar onSearch={handleSearch} />
+              <SearchBar onSearch={handleSearch} autoSearch={false} />
             </div>
 
             {recentSearches.length > 0 && (

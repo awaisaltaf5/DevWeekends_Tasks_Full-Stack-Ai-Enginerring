@@ -1,8 +1,8 @@
 import { useEffect, useCallback, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchRepos, loadMoreRepos } from '../store/slices/reposSlice.js'
-import { addRecentSearch } from '../store/slices/searchSlice.js'
+import { fetchRepos, loadMoreRepos, clearRepos } from '../store/slices/reposSlice.js'
+import { addRecentSearch, resetFilters } from '../store/slices/searchSlice.js'
 import SearchBar from '../components/search/SearchBar.jsx'
 import FilterPanel from '../components/search/FilterPanel.jsx'
 import RepoList from '../components/repo/RepoList.jsx'
@@ -28,6 +28,7 @@ function SearchPage() {
   const query = searchParams.get('q') || ''
   
   const hasFetched = useRef(false)
+  const hasManualSearch = useRef(false)
   
   // Get first repo for dynamic metadata
   const firstRepo = items[0]
@@ -46,13 +47,19 @@ function SearchPage() {
 
   const handleSearch = useCallback((searchQuery) => {
     if (!searchQuery.trim()) return
+    hasManualSearch.current = true
     setSearchParams({ q: searchQuery })
-    performSearch(searchQuery, filters)
-  }, [setSearchParams, performSearch, filters])
+    // Reset filters when user manually types a new search query
+    // This prevents stale filters (e.g. Python) from applying to the new search
+    dispatch(resetFilters())
+    performSearch(searchQuery, { language: '', sort: 'stars', order: 'desc' })
+  }, [setSearchParams, performSearch, dispatch])
 
   const handleFilterChange = useCallback((newFilters) => {
-    performSearch(query, newFilters)
-  }, [query, performSearch])
+    // Get latest query from URL at call time
+    const currentQueryFromUrl = searchParams.get('q') || ''
+    performSearch(currentQueryFromUrl, newFilters)
+  }, [searchParams, performSearch])
 
   const handleLoadMore = useCallback(() => {
     if (loadMoreStatus === 'loading' || !hasMore) return
@@ -69,11 +76,26 @@ function SearchPage() {
   useInfiniteScroll(handleLoadMore, hasMore, loadMoreStatus === 'loading')
 
   useEffect(() => {
-    if (query && !hasFetched.current) {
+    // Only auto-search on initial page load, not after manual search actions
+    if (query && !hasFetched.current && !hasManualSearch.current) {
       hasFetched.current = true
       performSearch(query, filters)
     }
-  }, [query, filters, performSearch])
+    hasManualSearch.current = false
+  }, [query, performSearch, filters])
+
+  // Reset fetch flag when query changes to allow new searches
+  useEffect(() => {
+    hasFetched.current = false
+  }, [query])
+
+  // Reset filters when component unmounts to prevent stale filter state on next visit
+  useEffect(() => {
+    return () => {
+      dispatch(resetFilters())
+      dispatch(clearRepos())
+    }
+  }, [dispatch])
 
   return (
     <>
@@ -83,7 +105,7 @@ function SearchPage() {
         <div className="flex-shrink-0 bg-gray-50 dark:bg-gray-900 z-30 px-4 sm:px-6 pt-4 pb-3 border-b border-gray-200/50 dark:border-gray-800/50">
           {/* Search Bar */}
           <div className="mb-3">
-            <SearchBar onSearch={handleSearch} initialValue={query} />
+            <SearchBar onSearch={handleSearch} initialValue={query} autoSearch={false} />
           </div>
 
           {/* Search Info */}

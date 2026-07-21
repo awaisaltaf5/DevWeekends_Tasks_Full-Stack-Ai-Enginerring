@@ -1,17 +1,25 @@
 import { useState, useEffect, useRef } from 'react'
-import { Search, X, Clock, ArrowUpDown } from 'lucide-react'
+import { Search, X, Clock } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setQuery, addRecentSearch } from '../../store/slices/searchSlice.js'
 import Input from '../ui/Input.jsx'
 import useDebounce from '../../hooks/useDebounce.js'
 
-function SearchBar({ onSearch, initialValue = '' }) {
+function SearchBar({ onSearch, initialValue = '', autoSearch = true }) {
   const [query, setQueryLocal] = useState(initialValue)
   const [showRecent, setShowRecent] = useState(false)
   const recentSearches = useSelector((state) => state.search.recentSearches)
   const inputRef = useRef(null)
   const dropdownRef = useRef(null)
   const dispatch = useDispatch()
+
+  // Track whether the current change is from user typing
+  const isUserTypingRef = useRef(false)
+
+  // Sync local state when initialValue prop changes (e.g., navigating to SearchPage with a new query)
+  useEffect(() => {
+    setQueryLocal(initialValue)
+  }, [initialValue])
 
   const debouncedQuery = useDebounce(query, 500)
 
@@ -27,15 +35,25 @@ function SearchBar({ onSearch, initialValue = '' }) {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // Trigger search when debounced query changes (only if user is typing, not on initial load)
+  // Auto-search when debounced query changes, but only for actual user typing
   useEffect(() => {
-    if (debouncedQuery.trim() && debouncedQuery !== initialValue) {
+    if (autoSearch && isUserTypingRef.current && debouncedQuery.trim()) {
       onSearch(debouncedQuery)
     }
-  }, [debouncedQuery, onSearch, initialValue])
+    // Reset flag after processing
+    isUserTypingRef.current = false
+  }, [debouncedQuery, onSearch, autoSearch])
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    if (query.trim()) {
+      dispatch(addRecentSearch(query))
+      onSearch(query)
+      setShowRecent(false)
+    }
+  }
+
+  const handleSearchClick = () => {
     if (query.trim()) {
       dispatch(addRecentSearch(query))
       onSearch(query)
@@ -47,6 +65,8 @@ function SearchBar({ onSearch, initialValue = '' }) {
     const value = e.target.value
     setQueryLocal(value)
     dispatch(setQuery(value))
+    // Mark that this change is from user typing
+    isUserTypingRef.current = true
   }
 
   const handleRecentClick = (term) => {
@@ -89,7 +109,8 @@ function SearchBar({ onSearch, initialValue = '' }) {
             )}
           </div>
           <button
-            type="submit"
+            type={autoSearch ? "button" : "submit"}
+            onClick={autoSearch ? handleSearchClick : undefined}
             className="px-5 sm:px-6 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 active:bg-blue-800 transition-all duration-200 font-medium flex-shrink-0 shadow-sm hover:shadow-md hover:shadow-blue-500/25 active:scale-95 text-sm"
           >
             Search
