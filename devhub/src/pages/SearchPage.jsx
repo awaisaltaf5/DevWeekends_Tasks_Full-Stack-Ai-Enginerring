@@ -8,6 +8,7 @@ import FilterPanel from '../components/search/FilterPanel.jsx'
 import RepoList from '../components/repo/RepoList.jsx'
 import Sidebar from '../components/layout/Sidebar.jsx'
 import useInfiniteScroll from '../hooks/useInfiniteScroll.js'
+import SEOHelmet, { getDynamicPageMetadata } from '../components/SEO/HelmetWrapper.jsx'
 
 function SearchPage() {
   const dispatch = useDispatch()
@@ -27,6 +28,10 @@ function SearchPage() {
   const query = searchParams.get('q') || ''
   
   const hasFetched = useRef(false)
+  
+  // Get first repo for dynamic metadata
+  const firstRepo = items[0]
+  const dynamicMeta = firstRepo ? getDynamicPageMetadata(firstRepo) : null
 
   const performSearch = useCallback((searchQuery, searchFilters) => {
     const effectiveQuery = searchQuery.trim() || 'stars:>1000'
@@ -71,79 +76,82 @@ function SearchPage() {
   }, [query, filters, performSearch])
 
   return (
-    <div className="h-[calc(100vh-8rem)] md:h-[calc(100vh-4rem)] flex flex-col overflow-hidden">
-      {/* Fixed Header - Search + Info */}
-      <div className="flex-shrink-0 bg-gray-50 dark:bg-gray-900 z-30 px-4 sm:px-6 pt-4 pb-3 border-b border-gray-200/50 dark:border-gray-800/50">
-        {/* Search Bar */}
-        <div className="mb-3">
-          <SearchBar onSearch={handleSearch} initialValue={query} />
-        </div>
+    <>
+      <SEOHelmet pageKey="search" dynamicData={dynamicMeta} />
+      <div className="h-[calc(100vh-8rem)] md:h-[calc(100vh-4rem)] flex flex-col overflow-hidden">
+        {/* Fixed Header - Search + Info */}
+        <div className="flex-shrink-0 bg-gray-50 dark:bg-gray-900 z-30 px-4 sm:px-6 pt-4 pb-3 border-b border-gray-200/50 dark:border-gray-800/50">
+          {/* Search Bar */}
+          <div className="mb-3">
+            <SearchBar onSearch={handleSearch} initialValue={query} />
+          </div>
 
-        {/* Search Info */}
-        {(query || filters.language) && (
-          <div className="flex items-center justify-between gap-4">
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {query ? (
-                <>
-                  Searching for: <span className="font-medium text-gray-900 dark:text-white">"{query}"</span>
-                </>
-              ) : (
-                <>Showing popular repositories</>
-              )}
-              {filters.language && (
-                <span> in <span className="font-medium text-blue-600 dark:text-blue-400">{filters.language}</span></span>
-              )}
-            </p>
-
-            {/* Results Count */}
-            {status === 'succeeded' && items.length > 0 && (
-              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 flex-shrink-0">
-                <span className="font-medium text-gray-900 dark:text-white tabular-nums">{totalCount.toLocaleString()}</span>
-                <span className="hidden sm:inline"> results</span>
-                <span className="ml-1 text-xs text-gray-400">({items.length} shown)</span>
+          {/* Search Info */}
+          {(query || filters.language) && (
+            <div className="flex items-center justify-between gap-4">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {query ? (
+                  <>
+                    Searching for: <span className="font-medium text-gray-900 dark:text-white">"{query}"</span>
+                  </>
+                ) : (
+                  <>Showing popular repositories</>
+                )}
+                {filters.language && (
+                  <span> in <span className="font-medium text-blue-600 dark:text-blue-400">{filters.language}</span></span>
+                )}
               </p>
-            )}
-          </div>
-        )}
-      </div>
 
-      {/* Scrollable Content Area */}
-      <div className="flex-1 overflow-hidden">
-        <div className="h-full flex gap-6 px-4 sm:px-6 py-4">
-          {/* Left Sidebar - Desktop Only */}
-          <div className="hidden lg:block w-64 flex-shrink-0 h-full overflow-y-auto pr-2 scrollbar-thin">
-            <div className="space-y-4 pb-4">
-              <FilterPanel onFilterChange={handleFilterChange} />
+              {/* Results Count */}
+              {status === 'succeeded' && items.length > 0 && (
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 flex-shrink-0">
+                  <span className="font-medium text-gray-900 dark:text-white tabular-nums">{totalCount.toLocaleString()}</span>
+                  <span className="hidden sm:inline"> results</span>
+                  <span className="ml-1 text-xs text-gray-400">({items.length} shown)</span>
+                </p>
+              )}
             </div>
-          </div>
+          )}
+        </div>
 
-          {/* Main Content - Scrollable */}
-          <div className="flex-1 min-w-0 h-full overflow-y-auto pr-2 scrollbar-thin">
-            {/* Mobile Filters */}
-            <div className="lg:hidden mb-4">
-              <FilterPanel onFilterChange={handleFilterChange} />
+        {/* Scrollable Content Area */}
+        <div className="flex-1 overflow-hidden">
+          <div className="h-full flex gap-6 px-4 sm:px-6 py-4">
+            {/* Left Sidebar - Desktop Only */}
+            <div className="hidden lg:block w-64 flex-shrink-0 h-full overflow-y-auto pr-2 scrollbar-thin">
+              <div className="space-y-4 pb-4">
+                <FilterPanel onFilterChange={handleFilterChange} />
+              </div>
             </div>
 
-            {/* Results */}
-            <RepoList 
-              repos={items} 
-              status={status} 
-              error={error}
-              loadMoreStatus={loadMoreStatus}
-              onLoadMore={handleLoadMore}
-              hasMore={hasMore}
-            />
-          </div>
+            {/* Main Content - Scrollable */}
+            <div className="flex-1 min-w-0 h-full overflow-y-auto pr-2 scrollbar-thin">
+              {/* Mobile Filters */}
+              <div className="lg:hidden mb-4">
+                <FilterPanel onFilterChange={handleFilterChange} />
+              </div>
 
-          {/* Right Sidebar - Desktop Only */}
-          <div className="hidden xl:block w-64 flex-shrink-0 h-full overflow-y-auto pr-2 scrollbar-thin">
-            <div className="pb-4">
-              <Sidebar />
+              {/* Results */}
+              <RepoList 
+                repos={items} 
+                status={status} 
+                error={error}
+                loadMoreStatus={loadMoreStatus}
+                onLoadMore={handleLoadMore}
+                hasMore={hasMore}
+              />
+            </div>
+
+            {/* Right Sidebar - Desktop Only */}
+            <div className="hidden xl:block w-64 flex-shrink-0 h-full overflow-y-auto pr-2 scrollbar-thin">
+              <div className="pb-4">
+                <Sidebar />
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 

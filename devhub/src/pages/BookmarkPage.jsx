@@ -26,6 +26,7 @@ import Button from '../components/ui/Button.jsx'
 import EmptyState from '../components/ui/EmptyState.jsx'
 import Input from '../components/ui/Input.jsx'
 import ExportModal from '../components/ui/ExportModal.jsx'
+import SEOHelmet from '../components/SEO/HelmetWrapper.jsx'
 
 function BookmarkPage() {
   const dispatch = useDispatch()
@@ -345,12 +346,12 @@ function BookmarkPage() {
       )}
 
       {/* Export Modal */}
-<ExportModal 
-  isOpen={isExportModalOpen} 
-  onClose={() => setIsExportModalOpen(false)} 
-  bookmarks={items}
-  categories={['All', ...categories.filter(c => c !== 'All'), ...allTags]}
-/>
+      <ExportModal 
+        isOpen={isExportModalOpen} 
+        onClose={() => setIsExportModalOpen(false)} 
+        bookmarks={items}
+        categories={['All', ...categories.filter(c => c !== 'All'), ...allTags]}
+      />
     </div>
   )
 }

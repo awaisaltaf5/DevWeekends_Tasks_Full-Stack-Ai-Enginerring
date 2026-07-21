@@ -21,6 +21,7 @@ import Badge from '../components/ui/Badge.jsx'
 import Button from '../components/ui/Button.jsx'
 import Skeleton from '../components/ui/Skeleton.jsx'
 import { formatStars, formatDate } from '../utils/formatters.js'
+import SEOHelmet, { getDynamicPageMetadata } from '../components/SEO/HelmetWrapper.jsx'
 
 function RepoDetailPage() {
   const { owner, name } = useParams()
@@ -34,6 +35,9 @@ function RepoDetailPage() {
   
   const bookmarks = useSelector((state) => state.bookmarks.items)
   const isBookmarked = repo ? bookmarks.some((b) => b.id === repo.id) : false
+  
+  // Dynamic SEO metadata
+  const dynamicMeta = repo ? getDynamicPageMetadata(repo) : null
 
   useEffect(() => {
     async function loadRepo() {
@@ -73,51 +77,59 @@ function RepoDetailPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="space-y-6">
-          <Skeleton className="h-8 w-1/3" />
-          <Skeleton className="h-4 w-2/3" />
-          <Skeleton className="h-40 w-full" />
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Skeleton className="h-24" />
-            <Skeleton className="h-24" />
-            <Skeleton className="h-24" />
-            <Skeleton className="h-24" />
+      <>
+        <SEOHelmet pageKey="search" />
+        <div className="container mx-auto px-4 py-8 max-w-4xl">
+          <div className="space-y-6">
+            <Skeleton className="h-8 w-1/3" />
+            <Skeleton className="h-4 w-2/3" />
+            <Skeleton className="h-40 w-full" />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <Skeleton className="h-24" />
+              <Skeleton className="h-24" />
+              <Skeleton className="h-24" />
+              <Skeleton className="h-24" />
+            </div>
           </div>
         </div>
-      </div>
+      </>
     )
   }
 
   if (error || !repo) {
     return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <div className="max-w-md mx-auto">
-          <div className="w-16 h-16 rounded-2xl bg-red-50 dark:bg-red-900/20 flex items-center justify-center mx-auto mb-4">
-            <Code2 className="w-8 h-8 text-red-400" />
-          </div>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-            {error || 'Repository not found'}
-          </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-            The repository might have been removed or you may have followed an incorrect link.
-          </p>
-          <div className="flex justify-center gap-3">
-            <Button onClick={() => navigate(-1)} variant="secondary">
-              <ArrowLeft className="w-4 h-4" />
-              Go Back
-            </Button>
-            <Button onClick={() => navigate('/search')}>
-              Search Repositories
-            </Button>
+      <>
+        <SEOHelmet pageKey="search" />
+        <div className="container mx-auto px-4 py-16 text-center">
+          <div className="max-w-md mx-auto">
+            <div className="w-16 h-16 rounded-2xl bg-red-50 dark:bg-red-900/20 flex items-center justify-center mx-auto mb-4">
+              <Code2 className="w-8 h-8 text-red-400" />
+            </div>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+              {error || 'Repository not found'}
+            </h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+              The repository might have been removed or you may have followed an incorrect link.
+            </p>
+            <div className="flex justify-center gap-3">
+              <Button onClick={() => navigate(-1)} variant="secondary">
+                <ArrowLeft className="w-4 h-4" />
+                Go Back
+              </Button>
+              <Button onClick={() => navigate('/search')}>
+                Search Repositories
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
+      </>
     )
   }
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-4xl animate-fadeIn">
+    <>
+      <SEOHelmet pageKey="search" dynamicData={dynamicMeta} />
+      <div className="container mx-auto px-4 py-6 max-w-4xl animate-fadeIn">
       {/* Back Button */}
       <button
         onClick={() => navigate(-1)}
@@ -242,6 +254,7 @@ function RepoDetailPage() {
         </a>
       </div>
     </div>
+    </>
   )
 }
 
