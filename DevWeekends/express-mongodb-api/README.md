@@ -412,6 +412,192 @@ curl -X DELETE http://localhost:5000/api/tasks/64f1b2c3d4e5f6a7b8c9d0e1 \
 | `403 Forbidden` | Task belongs to another user |
 | `404 Not Found` | Task does not exist or does not belong to the user |
 
+## Categories
+
+All category endpoints require a valid JWT.
+
+### Create a category
+
+```
+POST /api/categories
+Authorization: Bearer <JWT>
+```
+
+```bash
+curl -X POST http://localhost:5000/api/categories \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -d '{"name":"Work","description":"Work-related tasks"}'
+```
+
+**Success response (`201 Created`):**
+
+```json
+{
+  "success": true,
+  "message": "Category created successfully",
+  "data": {
+    "_id": "64f1b2c3d4e5f6a7b8c9d0e1",
+    "name": "Work",
+    "description": "Work-related tasks",
+    "user": "64f1b2c3d4e5f6a7b8c9d0e2",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
+}
+```
+
+**Error responses:**
+
+| Status | Condition |
+|--------|-----------|
+| `400 Bad Request` | Name is missing |
+| `401 Unauthorized` | Missing or invalid JWT |
+
+### Get all categories
+
+```
+GET /api/categories
+Authorization: Bearer <JWT>
+```
+
+```bash
+curl http://localhost:5000/api/categories \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**Success response (`200 OK`):**
+
+```json
+{
+  "success": true,
+  "count": 2,
+  "data": [
+    {
+      "_id": "64f1b2c3d4e5f6a7b8c9d0e1",
+      "name": "Work",
+      "description": "Work-related tasks",
+      "user": "64f1b2c3d4e5f6a7b8c9d0e2",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    }
+  ]
+}
+```
+
+**Error responses:**
+
+| Status | Condition |
+|--------|-----------|
+| `401 Unauthorized` | Missing or invalid JWT |
+
+### Get a single category
+
+```
+GET /api/categories/:id
+Authorization: Bearer <JWT>
+```
+
+```bash
+curl http://localhost:5000/api/categories/64f1b2c3d4e5f6a7b8c9d0e1 \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**Success response (`200 OK`):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "64f1b2c3d4e5f6a7b8c9d0e1",
+    "name": "Work",
+    "description": "Work-related tasks",
+    "user": "64f1b2c3d4e5f6a7b8c9d0e2",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
+}
+```
+
+**Error responses:**
+
+| Status | Condition |
+|--------|-----------|
+| `400 Bad Request` | Invalid category ID |
+| `401 Unauthorized` | Missing or invalid JWT |
+| `403 Forbidden` | Category belongs to another user |
+| `404 Not Found` | Category does not exist or does not belong to the user |
+
+### Update a category
+
+```
+PUT /api/categories/:id
+Authorization: Bearer <JWT>
+```
+
+```bash
+curl -X PUT http://localhost:5000/api/categories/64f1b2c3d4e5f6a7b8c9d0e1 \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -d '{"name":"Personal","description":"Personal tasks"}'
+```
+
+**Success response (`200 OK`):**
+
+```json
+{
+  "success": true,
+  "message": "Category updated successfully",
+  "data": {
+    "_id": "64f1b2c3d4e5f6a7b8c9d0e1",
+    "name": "Personal",
+    "description": "Personal tasks",
+    "user": "64f1b2c3d4e5f6a7b8c9d0e2",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
+}
+```
+
+**Error responses:**
+
+| Status | Condition |
+|--------|-----------|
+| `400 Bad Request` | Invalid category ID or empty name |
+| `401 Unauthorized` | Missing or invalid JWT |
+| `403 Forbidden` | Category belongs to another user |
+| `404 Not Found` | Category does not exist or does not belong to the user |
+
+### Delete a category
+
+```
+DELETE /api/categories/:id
+Authorization: Bearer <JWT>
+```
+
+```bash
+curl -X DELETE http://localhost:5000/api/categories/64f1b2c3d4e5f6a7b8c9d0e1 \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**Success response (`200 OK`):**
+
+```json
+{
+  "success": true,
+  "message": "Category deleted successfully"
+}
+```
+
+**Error responses:**
+
+| Status | Condition |
+|--------|-----------|
+| `400 Bad Request` | Invalid category ID |
+| `401 Unauthorized` | Missing or invalid JWT |
+| `403 Forbidden` | Category belongs to another user |
+| `404 Not Found` | Category does not exist or does not belong to the user |
+
 ## Error Responses
 
 All errors return a consistent JSON shape:

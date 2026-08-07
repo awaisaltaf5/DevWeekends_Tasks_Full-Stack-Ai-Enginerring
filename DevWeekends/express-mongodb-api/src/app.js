@@ -34,6 +34,7 @@ app.get('/api/health', (req, res) => {
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/tasks', require('./routes/taskRoutes'));
+app.use('/api/categories', require('./routes/categoryRoutes'));
 
 // 404 handler for unknown routes
 app.use(require('./middleware/error').notFound);
