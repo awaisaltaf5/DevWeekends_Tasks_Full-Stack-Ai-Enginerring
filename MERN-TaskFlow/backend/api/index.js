@@ -1,35 +1,15 @@
-let app;
-let handler;
-try {
-  const serverless = require('serverless-http');
-  const serverModule = require('../server.js');
-  app = serverModule.app;
-  handler = serverless(app);
-} catch (error) {
-  console.error('FATAL: Failed to initialize serverless function:', error);
-  // Create a minimal fallback so Vercel doesn't crash completely
-  try {
-    const express = require('express');
-    const serverless = require('serverless-http');
-    app = express();
-    app.get('/api/health', (req, res) => {
-      res.status(200).json({ success: true, status: 'OK', fallback: true });
-    });
-    app.get('*', (req, res) => {
-      res.status(500).json({
-        success: false,
-        message: 'Server failed to initialize',
-        error: error.message
-      });
-    });
-    handler = serverless(app);
-  } catch (fallbackError) {
-    console.error('FATAL: Even fallback failed:', fallbackError);
-    // Last resort: return a raw handler
-    handler = (req, res) => {
-      res.status(500).json({ success: false, message: 'Critical server failure' });
-    };
-  }
-}
+// Vercel Serverless Function Entry Point (api/index.js)
+// ---------------------------------------------------------------
+// FIX: Export the Express app DIRECTLY instead of wrapping with
+// serverless-http. Express apps implement the (req, res) handler
+// interface natively, which is fully compatible with Vercel's
+// @vercel/node runtime. The serverless-http wrapper was causing
+// responses to hang (status code 9 = 9ms duration, but response
+// never properly returned to the browser).
 
-module.exports = handler;
+const serverModule = require('../server.js');
+const app = serverModule.app;
+
+console.log('✅ Serverless function initialized successfully (direct Express export)');
+
+module.exports = app;
