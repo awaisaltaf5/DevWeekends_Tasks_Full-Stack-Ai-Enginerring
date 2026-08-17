@@ -1,0 +1,2 @@
+# This directory will hold Mongoose models (Product, Cart, Order, etc.).
+# Models are intentionally not implemented in Phase 1.
