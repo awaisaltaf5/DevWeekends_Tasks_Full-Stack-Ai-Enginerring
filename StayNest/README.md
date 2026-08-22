@@ -6,12 +6,14 @@
 
 StayNest is a polished full-stack hotel discovery and reservation platform built with the MERN stack. Search distinctive stays, save favourites, book with transparent pricing, and manage the whole experience from one calm, focused interface.
 
-[![Frontend](https://img.shields.io/badge/Frontend-Vercel-111827?logo=vercel&logoColor=white)](#deploy-to-vercel)
+[![Live Preview](https://img.shields.io/badge/Live%20Preview-Vercel-111827?logo=vercel&logoColor=white)](https://staynest-eight-zeta.vercel.app/)
 [![API](https://img.shields.io/badge/API-Express-16a34a?logo=express&logoColor=white)](https://staynest-backend-tawny.vercel.app/api/health)
 [![Tests](https://img.shields.io/badge/tests-112%20passing-16a34a?logo=vitest&logoColor=white)](#running-test-suites)
 [![License](https://img.shields.io/badge/license-ISC-64748b)](backend/package.json)
 
 **React 19** · **Express 5** · **MongoDB Atlas** · **JWT Auth** · **Tailwind CSS v4**
+
+[Open the live preview](https://staynest-eight-zeta.vercel.app/)
 
 </div>
 
@@ -58,7 +60,6 @@ StayNest brings the essential hotel journey into one cohesive product:
   - [Booking System & Price Calculation](#booking-system--price-calculation)
   - [Review Aggregation Engine](#review-aggregation-engine)
   - [Administrative Dashboard](#administrative-dashboard)
-- [Screenshots](#screenshots)
 - [Deploy to Vercel](#deploy-to-vercel)
 - [Security & Best Practices](#security--best-practices)
 
@@ -485,19 +486,6 @@ npm test
 2. The Overview tab displays revenue and counts computed via aggregate queries.
 3. The Hotels tab offers search, property creation, inline detail editing, active/inactive toggles, and deletion.
 4. The Bookings tab allows status updates (`pending`, `confirmed`, `completed`, `cancelled`).
-
----
-
-## Screenshots
-
-<!-- Add screenshots below after deployment -->
-| Home / Search Page | Hotel Details & Gallery |
-|---|---|
-| ![Home Page Placeholder](https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80) | ![Hotel Detail Placeholder](https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=600&q=80) |
-
-| Booking Confirmation | Admin Dashboard |
-|---|---|
-| ![Booking Placeholder](https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=600&q=80) | ![Admin Dashboard Placeholder](https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=600&q=80) |
 
 ---
 
