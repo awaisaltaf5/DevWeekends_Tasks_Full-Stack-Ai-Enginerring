@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Environment variables (never commit real credentials)
+.env*
+!.env.example
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build output
+dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local caches
+node_modules/.cache/
+.vite/
+.vercel/
+coverage/
+*.log
+
+# Transient verification artifacts (do not commit)
+.last-email
+server.err
+admin_test*.txt
+test_out*.txt

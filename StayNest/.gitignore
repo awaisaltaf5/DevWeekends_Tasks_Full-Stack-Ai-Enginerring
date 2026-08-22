@@ -1,0 +1,30 @@
+# StayNest repository-wide safety rules
+
+# Dependencies and build output
+**/node_modules/
+**/dist/
+**/.vercel/
+**/coverage/
+
+# Environment files and secrets (keep templates)
+**/.env*
+!**/.env.example
+
+# Logs and local runtime output
+*.log
+**/server.err
+**/.last-email
+**/admin_test*.txt
+**/test_out*.txt
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Frontend verification artifacts
+frontend/_verify.txt
+frontend/_print.cjs
