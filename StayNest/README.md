@@ -1,5 +1,7 @@
 # StayNest
 
+## [OPEN THE LIVE PREVIEW](https://staynest-eight-zeta.vercel.app/)
+
 <div align="center">
 
 ### Find a place that feels like yours.
