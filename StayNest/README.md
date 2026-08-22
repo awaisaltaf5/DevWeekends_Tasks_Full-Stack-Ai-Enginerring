@@ -5,7 +5,7 @@
 ### Find a place that feels like yours.
 
 StayNest is a polished full-stack hotel discovery and reservation platform built with the MERN stack. Search distinctive stays, save favourites, book with transparent pricing, and manage the whole experience from one calm, focused interface.
-##Live Preview: https://staynest-eight-zeta.vercel.app/
+
 
 [![Frontend](https://img.shields.io/badge/Frontend-Vercel-111827?logo=vercel&logoColor=white)](#deploy-to-vercel)
 [![API](https://img.shields.io/badge/API-Express-16a34a?logo=express&logoColor=white)](https://staynest-backend-tawny.vercel.app/api/health)
@@ -19,7 +19,7 @@ StayNest is a polished full-stack hotel discovery and reservation platform built
 <p align="center">
    <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1600&q=85" alt="A modern StayNest hotel exterior" width="100%" />
 </p>
-
+## Live Preview: https://staynest-eight-zeta.vercel.app/
 ## Why StayNest?
 
 StayNest brings the essential hotel journey into one cohesive product:
