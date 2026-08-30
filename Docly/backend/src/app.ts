@@ -49,6 +49,33 @@ export function createApp(): Express {
     });
   }
 
+  app.get('/', (_req, res) => {
+    res.status(200).json({
+      success: true,
+      message: 'Docly API is running',
+      status: 'ok',
+      routes: ['/api/health', '/api/auth', '/api/doctors', '/api/appointments'],
+    });
+  });
+
+  app.get('/api', (_req, res) => {
+    res.status(200).json({
+      success: true,
+      message: 'Docly API root',
+      status: 'ok',
+      routes: ['/api/health', '/api/auth', '/api/doctors', '/api/appointments'],
+    });
+  });
+
+  app.get('/api/', (_req, res) => {
+    res.status(200).json({
+      success: true,
+      message: 'Docly API root',
+      status: 'ok',
+      routes: ['/api/health', '/api/auth', '/api/doctors', '/api/appointments'],
+    });
+  });
+
   app.use('/api', routes);
 
   // 404 for unknown routes, then the centralized error handler.
@@ -57,3 +84,5 @@ export function createApp(): Express {
 
   return app;
 }
+
+export default createApp();
