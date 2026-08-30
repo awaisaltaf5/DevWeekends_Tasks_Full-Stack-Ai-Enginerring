@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+frontend/dist/
+backend/.build/
+backend/src/**/*.js
+backend/src/**/*.js.map
+
+# Environment files - keep secrets out of version control
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+*.err
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Misc runtime files
+.stay/

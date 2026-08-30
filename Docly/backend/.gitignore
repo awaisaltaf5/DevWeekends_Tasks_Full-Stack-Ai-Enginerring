@@ -1,0 +1,29 @@
+# Dependencies
+node_modules
+
+# Environment (secrets MUST never be committed)
+.env
+.env.*.local
+.env.production
+.env.local
+
+# Build output
+.build
+dist
+*.tsbuildinfo
+
+# Logs
+logs
+*.log
+npm-debug.log*
+backend-log.txt
+
+# One-off local verification scripts
+verify-medical.mjs
+verify-video.mjs
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store

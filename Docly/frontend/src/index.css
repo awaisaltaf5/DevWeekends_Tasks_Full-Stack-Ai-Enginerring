@@ -1,0 +1,181 @@
+@import "tailwindcss";
+
+@theme {
+  /* Docly brand palette — medical blue primary + clean neutrals */
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-primary-light: #bfdbfe;
+  --color-primary-bg: #eff6ff;
+  --color-accent: #0891b2;
+
+  --color-background: #ffffff;
+  --color-background-alt: #f8fafc;
+  --color-card: #ffffff;
+  --color-foreground: #0f172a;
+  --color-muted: #64748b;
+  --color-border: #e2e8f0;
+
+  --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    overflow-x: clip;
+  }
+}
+
+@layer components {
+  .container-docly {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg font-medium
+           bg-primary text-white hover:bg-primary-hover
+           focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-light
+           disabled:opacity-50 disabled:pointer-events-none transition-colors;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg font-medium
+           border border-border bg-card text-foreground hover:bg-background-alt
+           focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-light
+           disabled:opacity-50 disabled:pointer-events-none transition-colors;
+  }
+  .input {
+    @apply w-full rounded-lg border border-border bg-card px-4 py-2.5 text-foreground
+           placeholder-muted focus:border-primary focus:outline-none
+           focus:ring-2 focus:ring-primary-light transition-colors;
+  }
+  .card {
+    @apply rounded-2xl border border-border bg-card shadow-sm;
+  }
+  .card-hover {
+    @apply transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-lg;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Enhanced animations */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse-light {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.5s ease-out both;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.5s ease-out both;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.5s ease-out both;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out both;
+}
+
+.animate-pulse-light {
+  animation: pulse-light 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Stagger animations for multiple elements */
+.animate-fade-up {
+  animation: fadeUp 0.5s ease-out both;
+}
+
+.animate-fade-up:nth-child(1) { animation-delay: 0ms; }
+.animate-fade-up:nth-child(2) { animation-delay: 100ms; }
+.animate-fade-up:nth-child(3) { animation-delay: 200ms; }
+.animate-fade-up:nth-child(4) { animation-delay: 300ms; }
+.animate-fade-up:nth-child(5) { animation-delay: 400ms; }
+.animate-fade-up:nth-child(6) { animation-delay: 500ms; }
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Smooth section transitions */
+@media (prefers-reduced-motion: no-preference) {
+  section {
+    view-transition-name: auto;
+  }
+}
