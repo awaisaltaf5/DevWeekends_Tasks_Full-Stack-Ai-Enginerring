@@ -6,7 +6,6 @@ import { signToken } from '../services/tokenService';
 import { asyncHandler } from '../middleware/errorHandler';
 import { OAuth2Client } from 'google-auth-library';
 import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
-import bcrypt from 'bcryptjs';
 import { env } from '../config/env';
 import {
   type AuthenticatedRequest,
@@ -211,23 +210,30 @@ export const resetPassword = asyncHandler(
 
     const user = await User.findOne({ email: email.toLowerCase().trim() })
       .select('+password +recoveryCodes');
-    const suppliedHash = hashRecoveryCode(recoveryCode);
-    const matchingCode = user?.recoveryCodes.find((code) => {
-      if (code.usedAt || code.hash.length !== suppliedHash.length) return false;
-      return timingSafeEqual(Buffer.from(code.hash), Buffer.from(suppliedHash));
-    });
-    if (!user || !matchingCode) {
+    if (!user) {
       throw new AppError(400, 'Invalid or already used recovery code.');
     }
 
-    const passwordHash = await bcrypt.hash(password, 10);
-    const result = await User.updateOne(
-      { _id: user._id, 'recoveryCodes.hash': matchingCode.hash, 'recoveryCodes.usedAt': { $exists: false } },
-      { $set: { password: passwordHash, 'recoveryCodes.$.usedAt': new Date() } },
-    );
-    if (result.modifiedCount !== 1) {
+    const suppliedHash = hashRecoveryCode(recoveryCode);
+    const matchingCode = user.recoveryCodes.find((code) => {
+      if (code.usedAt || code.hash.length !== suppliedHash.length) return false;
+      return timingSafeEqual(Buffer.from(code.hash), Buffer.from(suppliedHash));
+    });
+    if (!matchingCode) {
       throw new AppError(400, 'Invalid or already used recovery code.');
     }
+
+    // Mark the matching code as used and set the new password. We mutate the
+    // already-loaded document and save() rather than issuing a positional `$`
+    // array update: a query combining `recoveryCodes.hash` with
+    // `recoveryCodes.usedAt: { $exists: false }` stops matching any other
+    // array element once one code is already used, which previously made only
+    // the FIRST code usable per account. `user.password` is re-hashed by the
+    // User pre('save') hook.
+    matchingCode.usedAt = new Date();
+    user.password = password;
+    await user.save();
+
     recoveryAttempts.delete(key);
     return sendSuccess(res, 200, 'Password reset successfully');
   },
