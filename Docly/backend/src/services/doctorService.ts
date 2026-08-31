@@ -44,8 +44,13 @@ const EARTH_RADIUS_KM = 6371;
 
 /** Build the Mongoose filter for a validated DoctorQuery object. */
 async function buildFilter(q: DoctorQuery): Promise<Record<string, unknown>> {
+  // Transparency: only APPROVED (verified) and active doctor profiles are ever
+  // exposed on the public discovery surface. Pending/rejected doctors remain
+  // hidden until an admin approves them (approve sets verificationStatus ->
+  // 'verified' and isActive -> true).
   const filter: Record<string, unknown> = {
     isActive: true,
+    verificationStatus: 'verified',
   };
 
   // Free text and selected location are one OR-based search surface. A
@@ -324,6 +329,8 @@ export async function getDoctorByRef(ref: string) {
   const profile = await DoctorProfile.findOne({
     $or: conditions,
     isActive: true,
+    // Public doctor detail pages only surface approved doctors (transparency).
+    verificationStatus: 'verified',
   })
     .populate('user', 'name email profileImage')
     .populate('specialty', 'name slug icon description');
