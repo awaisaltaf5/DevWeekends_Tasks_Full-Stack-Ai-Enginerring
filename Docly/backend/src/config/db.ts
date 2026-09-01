@@ -7,17 +7,16 @@ import { env, hasMongoUri } from './env';
  * The connection string is read from `process.env.MONGODB_URI` so no Atlas
  * credentials are ever hardcoded.
  *
- * - `bufferCommands = false` makes any DB query fail immediately (with a clear
- *   error) instead of buffering for 10s when Mongo is unreachable. Buffering
- *   caused DB-backed endpoints to hang and surface as `502 Bad Gateway`
- *   through the Vite dev proxy.
  * - A short `serverSelectionTimeoutMS` fails fast on an unreachable cluster
  *   rather than hanging the process.
+ * - On serverless (Vercel) the handler in `api/index.ts` guards requests and
+ *   returns a clear 503 when the DB is down instead of leaking Mongoose
+ *   connection errors to clients.
  *
  * Returns `true` when the connection was established, otherwise `false`. The
  * process keeps running so the `/api/health` smoke endpoint stays reachable
- * while the DB is being wired up, but DB-backed calls will now fail with a
- * clear error instead of silently hanging.
+ * while the DB is being wired up, but DB-backed calls will return 503 until
+ * Mongo is reachable.
  */
 // Latest connection attempt error. Exposed via /api/health so a "disconnected"
 // database can be diagnosed from the deployed response instead of needing raw
@@ -45,14 +44,12 @@ export async function connectDB(): Promise<boolean> {
   }
 
   try {
-    // Do not silently buffer DB commands when disconnected — fail fast so the
-    // failure is visible and debuggable instead of a 10-second hang -> 502.
-    mongoose.set('bufferCommands', false);
-
+    // Connect with a short timeout so Vercel cold-starts fail fast instead of
+    // hanging until the platform 504s. Commands are allowed to buffer while
+    // the connection is being established; we only surface the failure clearly
+    // via the /api/health endpoint and the serverless handler below.
     const uri = env.mongoUri;
     const connection = await mongoose.connect(uri, {
-      // Keep this under Vercel's ~10s serverless limit (Hobby) so a slow/failed
-      // connect reports "disconnected" gracefully instead of a hard 504.
       serverSelectionTimeoutMS: 9000,
     });
     lastDbErrorMessage = undefined;

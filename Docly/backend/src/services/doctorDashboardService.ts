@@ -25,12 +25,25 @@ export async function ensureDoctorProfile(user: { id: string; name: string; emai
     return existing;
   }
 
-  const chosen =
-    (await Specialty.findOne({ slug: DEFAULT_SPECIALTY_SLUG })) ?? (await Specialty.findOne());
+  // Fall back to any specialty if the default slug is missing; create a
+  // fallback specialty on the fly so the required `specialty` reference is
+  // never `undefined` (which would fail schema validation).
+  let chosen =
+    (await Specialty.findOne({ slug: DEFAULT_SPECIALTY_SLUG })) ??
+    (await Specialty.findOne());
+
+  if (!chosen) {
+    chosen = await Specialty.create({
+      name: 'General Physician',
+      slug: DEFAULT_SPECIALTY_SLUG,
+      icon: 'Stethoscope',
+      description: 'Primary care for everyday illnesses and checkups.',
+    });
+  }
 
   const profile = await DoctorProfile.create({
     user: user.id,
-    specialty: chosen ? chosen._id : undefined,
+    specialty: chosen._id,
     slug: slugify(`${user.name} ${randomSuffix()}`),
     yearsOfExperience: 0,
     consultationFee: 0,
@@ -40,7 +53,11 @@ export async function ensureDoctorProfile(user: { id: string; name: string; emai
     profileImage: placeholderAvatar(user.name),
     isActive: true,
   });
-  return profile;
+
+  // Repopulate after create so callers get the full document.
+  return DoctorProfile.findById(profile._id)
+    .populate('user', 'name email profileImage role')
+    .populate('specialty', 'name slug icon description');
 }
 
 export type ProfileUpdate = Partial<{

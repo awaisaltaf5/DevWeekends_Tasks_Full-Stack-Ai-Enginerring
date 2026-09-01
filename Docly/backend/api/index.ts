@@ -6,7 +6,7 @@
  * because Vercel manages the port in its serverless runtime.
  */
 import { createApp } from '../src/app';
-import { connectDB } from '../src/config/db';
+import { connectDB, getDbError } from '../src/config/db';
 
 declare global {
   // When a lambda instance is reused (warm start) we skip reconnecting.
@@ -23,6 +23,15 @@ export default async function handler(req: any, res: any) {
     const connected = await connectDB();
     if (connected) {
       globalThis.__doclyDbConnected = true;
+    } else {
+      // Surface a clear error instead of letting unconnected queries crash
+      // with Mongoose's "bufferCommands=false" error.
+      return res.status(503).json({
+        success: false,
+        message: 'Database is unavailable. Please try again later.',
+        database: 'disconnected',
+        dbError: getDbError() ?? 'Connection failed',
+      });
     }
   }
 
