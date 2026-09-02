@@ -1,124 +1,110 @@
 import React from "react";
-import {
-    AiFillFacebook,
-    AiFillInstagram,
-    AiFillYoutube,
-    AiOutlineTwitter,
-} from "react-icons/ai";
 import { Link } from "react-router-dom";
 import {
-    footercompanyLinks,
-    footerProductLinks,
-    footerSupportLinks,
+  footercompanyLinks,
+  footerProductLinks,
+  footerSupportLinks,
 } from "../../static/data";
 
 const Footer = () => {
-    return (
-        <div className="bg-[#000] text-white">
-            <div className="md:flex md:justify-between md:items-center sm:px-12 px-4 bg-[#342ac8] py-7">
-                <h1 className="lg:text-4xl text-3xl md:mb-0 mb-6 lg:leading-normal font-semibold md:w-2/5">
-                    <span className="text-[#56d879]">Subscribe</span> us for get news{" "}
-                    <br />
-                    events and offers
-                </h1>
-                <div>
-                    <input
-                        type="text"
-                        required
-                        placeholder="Enter your email..."
-                        className="text-gray-800
-                sm:w-72 w-full sm:mr-5 mr-1 lg:mb-0 mb-4 py-2.5 rounded px-2 focus:outline-none"
-                    />
-                    <button className="bg-[#56d879] hover:bg-teal-500 duration-300 px-5 py-2.5 rounded-md text-whie md:w-auto w-full">
-                        Submit
-                    </button>
-                </div>
-            </div>
-            <div className="grid grid-cols-1 sm:gird-cols-3 lg:grid-cols-4 gap-6 sm:px-8 px-5 py-16 sm:text-center">
-                <ul className="px-5 text-center sm:text-start flex sm:block flex-col items-center">
-                    <h1 className="text-[28px] font-Poppins font-bold text-white">
-                        Vendora
-                    </h1>
-                    <br />
-                    <p>The home and elements needeed to create beatiful products.</p>
-                    <div className="flex items-center mt-[15px]">
-                        <AiFillFacebook size={25} className="cursor-pointer" />
-                        <AiOutlineTwitter
-                            size={25}
-                            style={{ marginLeft: "15px", cursor: "pointer" }}
-                        />
-                        <AiFillInstagram
-                            size={25}
-                            style={{ marginLeft: "15px", cursor: "pointer" }}
-                        />
-                        <AiFillYoutube
-                            size={25}
-                            style={{ marginLeft: "15px", cursor: "pointer" }}
-                        />
-                    </div>
-                </ul>
-
-                <ul className="text-center sm:text-start">
-                    <h1 className="mb-1 font-semibold">Company</h1>
-                    {footerProductLinks.map((link, index) => (
-                        <li key={index}>
-                            <Link
-                                className="text-gray-400 hover:text-teal-400 duration-300
-                   text-sm cursor-pointer leading-6"
-                                to={link.link}
-                            >
-                                {link.name}
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
-
-                <ul className="text-center sm:text-start">
-                    <h1 className="mb-1 font-semibold">Shop</h1>
-                    {footercompanyLinks.map((link, index) => (
-                        <li key={index}>
-                            <Link
-                                className="text-gray-400 hover:text-teal-400 duration-300
-                   text-sm cursor-pointer leading-6"
-                                to={link.link}
-                            >
-                                {link.name}
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
-
-                <ul className="text-center sm:text-start">
-                    <h1 className="mb-1 font-semibold">Support</h1>
-                    {footerSupportLinks.map((link, index) => (
-                        <li key={index}>
-                            <Link
-                                className="text-gray-400 hover:text-teal-400 duration-300
-                   text-sm cursor-pointer leading-6"
-                                to={link.link}
-                            >
-                                {link.name}
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-
-            <div
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10
-         text-center pt-2 text-gray-400 text-sm pb-8"
-            >
-                <span>© {new Date().getFullYear()} Vendora. All rights reserved.</span>
-                <span>Terms · Privacy Policy</span>
-                <div className="sm:block flex items-center justify-center w-full">
-                    <img
-                        src="https://hamart-shop.vercel.app/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Ffooter-payment.a37c49ac.png&w=640&q=75"
-                        alt=""
-                    />
-                </div>
-            </div>
+  return (
+    <footer className="bg-ink text-white">
+      {/* CTA / trust band */}
+      <div className="bg-brand-dark">
+        <div className="max-w-[1280px] mx-auto px-4 py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h2 className="text-2xl md:text-3xl font-semibold leading-snug">
+              Ready to start selling on Vendora?
+            </h2>
+            <p className="text-white/80 text-sm mt-1">
+              Join thousands of trusted sellers and reach millions of buyers.
+            </p>
+          </div>
+          <Link
+            to="/shop-create"
+            className="inline-flex items-center justify-center px-7 h-[48px] rounded-lg bg-white text-brand-dark font-[600] hover:bg-surface-soft transition-colors shrink-0"
+          >
+            Open a Shop — It’s Free
+          </Link>
         </div>
-    );
+      </div>
+
+      {/* Link columns */}
+      <div className="max-w-[1280px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 px-4 py-14">
+        {/* Brand */}
+        <div className="col-span-2 md:col-span-1">
+          <span className="text-[26px] font-Poppins font-bold tracking-tight">
+            <span className="text-white">Ven</span>
+            <span className="text-[#a78bfa]">dora</span>
+          </span>
+          <p className="text-white/70 text-sm leading-relaxed mt-3">
+            A modern multi-vendor marketplace connecting buyers with trusted
+            independent sellers — secure payments, fast delivery and buyer
+            protection on every order.
+          </p>
+        </div>
+
+        <div className="md:col-span-1">
+          <h3 className="text-[15px] font-semibold mb-4">Marketplace</h3>
+          <ul className="space-y-2.5">
+            {footerProductLinks.map((link, index) => (
+              <li key={index}>
+                <Link
+                  className="text-white/70 hover:text-white text-sm transition-colors"
+                  to={link.link}
+                >
+                  {link.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="md:col-span-1">
+          <h3 className="text-[15px] font-semibold mb-4">Shop</h3>
+          <ul className="space-y-2.5">
+            {footercompanyLinks.map((link, index) => (
+              <li key={index}>
+                <Link
+                  className="text-white/70 hover:text-white text-sm transition-colors"
+                  to={link.link}
+                >
+                  {link.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="md:col-span-1">
+          <h3 className="text-[15px] font-semibold mb-4">Support</h3>
+          <ul className="space-y-2.5">
+            {footerSupportLinks.map((link, index) => (
+              <li key={index}>
+                <Link
+                  className="text-white/70 hover:text-white text-sm transition-colors"
+                  to={link.link}
+                >
+                  {link.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      {/* Bottom bar */}
+      <div className="border-t border-white/10">
+        <div className="max-w-[1280px] mx-auto px-4 py-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-[13px] text-white/60">
+          <span>© 2026 Vendora. All rights reserved.</span>
+          <span>
+            Developed by{" "}
+            <span className="text-white/80 font-medium">Muhammad Awais Altaf</span>
+          </span>
+        </div>
+      </div>
+    </footer>
+  );
 };
 
 export default Footer;

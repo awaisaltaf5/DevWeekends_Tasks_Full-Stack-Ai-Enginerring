@@ -113,6 +113,21 @@ const templates = {
        <strong>Request ID:</strong> ${withdrawId}</p>
        <p>Review it in the Vendora admin dashboard.</p>`
     ),
+
+  welcomeSeller: ({ name }) =>
+    layout(
+      "Welcome to Vendora",
+      `<p>Hi <strong>${name}</strong>,</p>
+       <p>Your seller shop is <strong>live</strong> on Vendora! 🎉</p>
+       <p>Here's how to make the most of your new shop:</p>
+       <ul style="font-size:14px;color:#334155;padding-left:18px;margin:12px 0;">
+         <li style="margin-bottom:6px;">Add your first product from the seller dashboard</li>
+         <li style="margin-bottom:6px;">Set up your shop profile and logo</li>
+         <li style="margin-bottom:6px;">Add a withdrawal method so you can get paid</li>
+       </ul>
+       ${button("/shop-dashboard", "Open Seller Dashboard")}
+       <p>We're excited to have you selling with us!</p>`
+    ),
 };
 
 module.exports = templates;

@@ -42,7 +42,7 @@ const AdminHeader = () => {
             />
           </Link>
           <img
-            src={`$\{user?.avatar}`}
+            src={`${user?.avatar}`}
             alt=""
             className="w-[50px] h-[50px] rounded-full object-cover"
           />

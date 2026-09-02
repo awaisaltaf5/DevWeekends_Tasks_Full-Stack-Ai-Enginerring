@@ -53,9 +53,9 @@ const DashboardHeader = () => {
                     </Link>
                     <Link to={`/shop/${seller._id}`}>
                         <img
-                            src={`$\{seller.avatar}`}
+                            src={seller.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=120&q=80"}
                             alt=""
-                            className="w-[50px] h-[50px] rounded-full object-cover"
+                            className="w-[44px] h-[44px] rounded-full object-cover"
                         />
                     </Link>
                 </div>

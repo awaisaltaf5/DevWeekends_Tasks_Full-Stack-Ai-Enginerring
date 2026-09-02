@@ -141,7 +141,7 @@ const CartSingle = ({ data, quantityChangeHandler, removeFromCartHandler }) => {
             </div>
           </div>
           <img
-            src={`$\{data?.images[0]}`}
+            src={`${data?.images[0]}`}
             className="w-[130px] h-min ml-2 mr-2 rounded-[5px]"
             alt="side card"
           />

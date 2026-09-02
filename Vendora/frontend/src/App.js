@@ -63,6 +63,7 @@ import axios from "axios";
 import { server } from "./server";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 const App = () => {
   const [stripeApikey, setStripeApiKey] = useState("");
@@ -81,8 +82,9 @@ const App = () => {
   }, []);
 
   return (
-    <BrowserRouter>
-      <Routes>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <Routes>
         <Route
           path="/payment"
           element={
@@ -345,7 +347,8 @@ const App = () => {
         pauseOnHover
         theme="dark"
       />
-    </BrowserRouter>
+        </BrowserRouter>
+      </ErrorBoundary>
   );
 };
 export default App;

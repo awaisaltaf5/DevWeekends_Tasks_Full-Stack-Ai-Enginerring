@@ -105,7 +105,7 @@ const UserOrderDetails = () => {
           return (
             <div className="w-full flex items-start mb-5">
               <img
-                src={`$\{item.images[0]}`}
+                src={`${item.images[0]}`}
                 alt="Product item order img"
                 className="w-[80x] h-[80px]"
               />
@@ -144,7 +144,7 @@ const UserOrderDetails = () => {
             <br />
             <div className="w-full flex">
               <img
-                src={`$\{selectedItem?.images[0]}`}
+                src={`${selectedItem?.images[0]}`}
                 alt=""
                 className="w-[80px] h-[80px]"
               />

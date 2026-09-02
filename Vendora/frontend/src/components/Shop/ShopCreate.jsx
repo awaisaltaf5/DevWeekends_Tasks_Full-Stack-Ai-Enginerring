@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineArrowLeft } from "react-icons/ai";
 import styles from "../../styles/styles";
 import { Link, useNavigate } from "react-router-dom";
@@ -19,17 +19,104 @@ const ShopCreate = () => {
     const [avatar, setAvatar] = useState();
     const [password, setPassword] = useState("");
     const [visible, setVisible] = useState(false);
+         const [loading, setLoading] = useState(false);
+    const [formError, setFormError] = useState("");
+    const googleButtonRef = useRef(null);
+
+    // Google Sign-Up — reuses the same GSI loader as Login.jsx
+    useEffect(() => {
+        const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+        if (!clientId) return;
+
+                const handleGoogleResponse = async (response) => {
+            try {
+                const res = await axios.post(
+                    `${server}/shop/google-shop-signup`,
+                    {
+                        credential: response.credential,
+                        name,
+                        address,
+                        zipCode,
+                        phoneNumber,
+                    },
+                    { withCredentials: true }
+                );
+                const message = res.data?.message;
+                if (res.data?.shop || res.data?.requiresActivation) {
+                    toast.success(res.data.message || "Shop created successfully!");
+                    if (res.data.activationUrl) {
+                        window.location.href = res.data.activationUrl;
+                    } else {
+                        navigate("/shop-login");
+                        window.location.reload();
+                    }
+                } else {
+                    toast.success(message || "Shop created successfully!");
+                    navigate("/shop-login");
+                    window.location.reload();
+                }
+            } catch (err) {
+                toast.error(err.response?.data?.message || "Google signup failed");
+            }
+        };
+
+        const renderGoogleButton = () => {
+            if (window.google?.accounts?.id && googleButtonRef.current) {
+                window.google.accounts.id.renderButton(googleButtonRef.current, {
+                    theme: "outline",
+                    size: "large",
+                    width: 360,
+                    text: "signup_with",
+                });
+            }
+        };
+
+        if (window.google?.accounts?.id) {
+            renderGoogleButton();
+                } else {
+            const script = document.createElement("script");
+            script.src = "https://accounts.google.com/gsi/client";
+            script.async = true;
+            script.onload = renderGoogleButton;
+            document.body.appendChild(script);
+        }
+    }, [name, address, zipCode, phoneNumber]);
+
+    const handleFileInputChange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+            setFormError("Please upload a JPG, PNG or WebP image.");
+            e.target.value = null;
+            return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+            setFormError("Image must be smaller than 5 MB.");
+            e.target.value = null;
+            return;
+        }
+        setFormError("");
+        setAvatar(file);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setFormError("");
+        if (!name.trim() || !email.trim() || !password || !address || !zipCode || !phoneNumber) {
+            setFormError("Please fill in all required fields.");
+            return;
+        }
+        if (password.length < 6) {
+            setFormError("Password must be at least 6 characters.");
+            return;
+        }
+        if (loading) return; // prevent duplicate submissions
+        setLoading(true);
 
         const config = { headers: { "Content-Type": "multipart/form-data" } };
-        // meaning of uper line is that we are creating a new object with the name of config and the value of config is {headers:{'Content-Type':'multipart/form-data'}}  
 
         const newForm = new FormData();
-        // meaning of uper line is that we are creating a new form data object and we are sending it to the backend with the name of newForm and the value of newForm is new FormData()
         newForm.append("file", avatar);
-        // meanin of newForm.append("file",avatar) is that we are sending a file to the backend with the name of file and the value of the file is avatar
         newForm.append("name", name);
         newForm.append("email", email);
         newForm.append("password", password);
@@ -37,33 +124,23 @@ const ShopCreate = () => {
         newForm.append("address", address);
         newForm.append("phoneNumber", phoneNumber);
 
-        axios
-            .post(`${server}/shop/create-shop`, newForm, config)
-            .then((res) => {
-                toast.success(res.data.message);
-                setName("");
-                setEmail("");
-                setPassword("");
-                setAvatar();
-                setZipCode();
-                setAddress("");
-                setPhoneNumber();
-
-            })
-
-            .catch((error) => {
-                toast.error(error.response.data.message);
-            });
-        navigate("/shop-login")
-        window.location.reload();
-
-
-
-    }
-    // File upload
-    const handleFileInputChange = (e) => {
-        const file = e.target.files[0];
-        setAvatar(file);
+        try {
+            const res = await axios.post(
+                `${server}/shop/create-shop`,
+                newForm,
+                config
+            );
+            toast.success(res.data.message);
+            navigate("/shop-login");
+        } catch (error) {
+            const msg =
+                error.response?.data?.message ||
+                "Unable to register your shop. Please try again.";
+            setFormError(msg);
+            toast.error(msg);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -71,14 +148,18 @@ const ShopCreate = () => {
             <div className='sm:mx-auto sm:w-full sm:max-w-md'>
                 <Link
                     to="/"
-                    className="inline-flex items-center gap-2 mb-4 text-sm font-medium text-blue-600 hover:text-blue-500"
+                    className="inline-flex items-center gap-2 mb-4 text-sm font-medium text-brand hover:text-brand-dark"
                 >
                     <AiOutlineArrowLeft size={18} />
                     Back to Home
                 </Link>
                 <h2 className="mt-2 text-center text-3xl font-extrabold text-gray-900">
-                    Register as a seller
-                </h2>
+                        Open your{" "}
+                        <span className="text-brand">Vendora</span> shop
+                    </h2>
+                    <p className="mt-2 text-center text-sm text-gray-500">
+                        Reach millions of buyers — it takes just a few minutes
+                    </p>
             </div>
             <div className='mt-8 sm:mx-auto sm:w-full sm:max-w-[35rem]'>
                 <div className='bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10'>
@@ -88,7 +169,7 @@ const ShopCreate = () => {
                             <label htmlFor="name"
                                 className='block text-sm font-medium text-gray-700'
                             >
-                                shop name
+                                Shop name
                             </label>
                             <div className='mt-1'>
                                 <input type="name"
@@ -112,7 +193,7 @@ const ShopCreate = () => {
                                 <input
                                     type="number"
                                     name='phone-number'
-                                    autoComplete='password'
+                                    autoComplete='tel'
                                     required
                                     value={phoneNumber}
                                     onChange={(e) => setPhoneNumber(e.target.value)}
@@ -255,20 +336,46 @@ const ShopCreate = () => {
 
 
 
+                        {formError && (
+                            <div
+                                role="alert"
+                                className="text-sm text-errorred bg-errorred-soft border border-red-200 rounded-md px-3 py-2"
+                            >
+                                {formError}
+                            </div>
+                        )}
+
                         <div>
                             <button
                                 type='submit'
-                                className=' className="group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"'
+                                disabled={loading}
+                                className="w-full h-[46px] flex items-center justify-center gap-2 px-4 text-sm font-medium rounded-lg text-white bg-brand hover:bg-brand-dark disabled:opacity-60 disabled:cursor-not-allowed transition-colors cursor-pointer"
                             >
-                                Submit
+                                {loading && (
+                                    <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                    </svg>
+                                )}
+                                {loading ? "Creating your shop..." : "Create my shop"}
                             </button>
                         </div>
 
-                        <div className={`${styles.noramlFlex} w-full`} >
-                            <h4>Already have an account?</h4>
-                            <Link to="/shop-login" className="text-blue-600 pl-2">
-                                Sign In
+                                                <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
+                            <span>Already have a shop?</span>
+                            <Link to="/shop-login" className="font-medium text-brand hover:text-brand-dark">
+                                Sign in
                             </Link>
+                        </div>
+
+                        {/* Google Sign-Up */}
+                        <div className="flex flex-col items-center gap-2 text-sm text-gray-600">
+                            <span className="relative flex items-center w-full">
+                                <span className="flex-grow border-t border-gray-200"></span>
+                                <span className="px-3 text-xs text-gray-500">Or continue with</span>
+                                <span className="flex-grow border-t border-gray-200"></span>
+                            </span>
+                            <div ref={googleButtonRef} className="w-full max-w-sm"></div>
                         </div>
                     </form>
                 </div>

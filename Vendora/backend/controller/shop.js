@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
+const { OAuth2Client } = require("google-auth-library");
 const sendMail = require("../utils/sendMail");
 const Shop = require("../model/shop");
 const { isAuthenticated, isSeller, isAdmin } = require("../middleware/auth");
@@ -42,20 +43,20 @@ router.post("/create-shop", upload.single("file"), async (req, res, next) => {
 
     const activationUrl = `${process.env.CLIENT_URL}/seller/activation/${activationToken}`;
 
-    try {
-      await sendMail({
-        email: seller.email,
-        subject: "Activate your Vendora Shop",
-        html: templates.shopActivation({ name: seller.name, activationUrl }),
-        message: `Hello ${seller.name}, please click on the link to activate your shop: ${activationUrl}`,
-      });
-      res.status(201).json({
-        success: true,
-        message: `please check your email:- ${seller.email} to activate your shop!`,
-      });
-    } catch (error) {
-      return next(new ErrorHandler(error.message, 500));
-    }
+    // Email is sent in a FAIL-SOFT way: a transient SMTP outage must not block
+    // registration. sendMail() retries internally; if it still fails we log it and
+    // still return 201 so the seller can be created & the email re-attempted.
+    await sendMail({
+      email: seller.email,
+      subject: "Activate your Vendora Shop",
+      html: templates.shopActivation({ name: seller.name, activationUrl }),
+      message: `Hello ${seller.name}, please click on the link to activate your shop: ${activationUrl}`,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: `please check your email:- ${seller.email} to activate your shop!`,
+    });
   } catch (error) {
     return next(new ErrorHandler(error.message, 400));
   }
@@ -67,6 +68,74 @@ const createActivationToken = (seller) => {
     expiresIn: "5m",
   });
 };
+
+// Sign up as a seller with Google — the email is verified by Google, so the
+// shop is created and activated immediately (no activation email needed).
+router.post(
+  "/google-shop-signup",
+  upload.single("file"),
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const { credential, name, address, zipCode, phoneNumber } = req.body;
+      if (!credential) {
+        return next(new ErrorHandler("Google credential is required", 400));
+      }
+      if (!name || !address || !zipCode || !phoneNumber) {
+        return next(
+          new ErrorHandler("Please fill in your shop name, address, phone and zip code", 400)
+        );
+      }
+
+      // verify the Google ID token server-side
+      const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+      const ticket = await client.verifyIdToken({
+        idToken: credential,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+      const payload = ticket.getPayload();
+      if (!payload || !payload.email) {
+        return next(new ErrorHandler("Invalid Google token", 400));
+      }
+
+      const existingShop = await Shop.findOne({ email: payload.email });
+      if (existingShop) {
+        // already a seller — just log them in
+        return sendShopToken(existingShop, 200, res);
+      }
+
+      let avatar = payload.picture || "";
+      if (req.file) {
+        const result = await uploadBuffer(req.file.buffer, "vendora/shops");
+        avatar = result.secure_url;
+      }
+
+      const shop = await Shop.create({
+        name,
+        email: payload.email, // use the Google-verified email, never the body
+        password: jwt.sign({ g: payload.sub }, process.env.JWT_SECRET), // unusable random password
+        avatar,
+        address,
+        phoneNumber,
+        zipCode,
+      });
+
+      try {
+        await sendMail({
+          email: shop.email,
+          subject: "Welcome to Vendora — your shop is live!",
+          html: templates.welcomeSeller ? templates.welcomeSeller({ name: shop.name }) : undefined,
+          message: `Welcome to Vendora, ${shop.name}! Your seller account has been created successfully.`,
+        });
+      } catch (_) {
+        // email is best-effort — never block seller onboarding on SMTP
+      }
+
+      return sendShopToken(shop, 201, res);
+    } catch (error) {
+      return next(new ErrorHandler(error.message || "Google seller signup failed", 400));
+    }
+  })
+);
 
 // activate user
 router.post(
@@ -104,7 +173,16 @@ router.post(
 
       sendShopToken(seller, 201, res);
     } catch (error) {
-      return next(new ErrorHandler(error.message, 500));
+      // invalid/expired activation tokens are a client error → 400, not 500
+      const isTokenError =
+        error.name === "JsonWebTokenError" || error.name === "TokenExpiredError";
+      const status = isTokenError ? 400 : 500;
+      const message = isTokenError
+        ? error.name === "TokenExpiredError"
+          ? "Activation link has expired. Please register again."
+          : "Invalid activation token."
+        : error.message;
+      return next(new ErrorHandler(message, status));
     }
   })
 );

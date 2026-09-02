@@ -1,3 +1,10 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /profile
+Disallow: /inbox
+Disallow: /checkout
+Disallow: /dashboard
+Disallow: /admin
+
+Sitemap: https://vendora.example.com/sitemap.xml

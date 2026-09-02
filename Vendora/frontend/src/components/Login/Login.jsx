@@ -12,6 +12,8 @@ const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("")
     const [visible, setVisible] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const [formError, setFormError] = useState("")
     const googleButtonRef = useRef(null);
 
     // Google Sign-In (Google Identity Services)
@@ -62,23 +64,33 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setFormError("");
 
-        await axios
-            .post(
+        if (!email.trim() || !password) {
+            setFormError("Please enter both your email and password.");
+            return;
+        }
+        if (loading) return; // prevent duplicate submissions
+        setLoading(true);
+
+        try {
+            await axios.post(
                 `${server}/user/login-user`,
-                {
-                    email,
-                    password,
-                },
+                { email, password },
                 { withCredentials: true }
-            ).then((res) => {
-                toast.success("Login Sucess!")
-                navigate("/")
-                window.location.reload(true);
-            })
-            .catch((err) => {
-                toast.error(err.response.data.message);
-            });
+            );
+            toast.success("Login Successful!");
+            navigate("/");
+            window.location.reload(true);
+        } catch (err) {
+            const msg =
+                err.response?.data?.message ||
+                "Unable to log in. Please try again.";
+            setFormError(msg);
+            toast.error(msg);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -86,14 +98,18 @@ const Login = () => {
             <div className='sm:mx-auto sm:w-full sm:max-w-md'>
                 <Link
                     to="/"
-                    className="inline-flex items-center gap-2 mb-4 text-sm font-medium text-blue-600 hover:text-blue-500"
+                    className="inline-flex items-center gap-2 mb-4 text-sm font-medium text-brand hover:text-brand-dark"
                 >
                     <AiOutlineArrowLeft size={18} />
                     Back to Home
                 </Link>
                 <h2 className="mt-2 text-center text-3xl font-extrabold text-gray-900">
-                    Login to your account
+                    Welcome back to{" "}
+                    <span className="text-brand">Vendora</span>
                 </h2>
+                <p className="mt-2 text-center text-sm text-gray-500">
+                    Sign in to continue shopping
+                </p>
             </div>
             <div className='mt-8 sm:mx-auto sw:w-full sm:max-w-md'>
                 <div className='bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10'>
@@ -158,37 +174,55 @@ const Login = () => {
                                     type="checkbox"
                                     name="remember-me"
                                     id="remember-me"
-                                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                    className="h-4 w-4 accent-brand border-line rounded"
                                 />
                                 <label
                                     htmlFor="remember-me"
-                                    className="ml-2 block text-sm text-gray-900"
+                                    className="ml-2 block text-sm text-gray-700"
                                 >
                                     Remember me
                                 </label>
                             </div>
                             <div className='text-sm'>
-                                <a
-                                    href=".forgot-password"
-                                    className="font-medium text-blue-600 hover:text-blue-500"
+                                <Link
+                                    to="/faq"
+                                    className="font-medium text-brand hover:text-brand-dark"
                                 >
-                                    Forgot your password?
-                                </a>
+                                    Need help?
+                                </Link>
                             </div>
                         </div>
+                        {formError && (
+                            <div
+                                role="alert"
+                                className="text-sm text-errorred bg-errorred-soft border border-red-200 rounded-md px-3 py-2"
+                            >
+                                {formError}
+                            </div>
+                        )}
                         <div>
                             <button
                                 type='submit'
-                                className=' className="group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"'
+                                disabled={loading}
+                                className="group relative w-full h-[46px] flex items-center justify-center gap-2 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-brand hover:bg-brand-dark disabled:opacity-60 disabled:cursor-not-allowed transition-colors cursor-pointer"
                             >
-                                Submit
+                                {loading && (
+                                    <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                    </svg>
+                                )}
+                                {loading ? "Logging in..." : "Login"}
                             </button>
                         </div>
 
-                        <div className={`${styles.noramlFlex} w-full`} >
-                            <h4>Not have any account</h4>
-                            <Link to="/sign-up" className="text-blue-600 pl-2">
-                                Sign Up
+                        <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
+                            <span>New to Vendora?</span>
+                            <Link
+                                to="/sign-up"
+                                className="font-medium text-brand hover:text-brand-dark"
+                            >
+                                Create an account
                             </Link>
                         </div>
 

@@ -39,21 +39,17 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
 
     const activationUrl = `${process.env.CLIENT_URL}/activation/${activationToken}`;
 
-    // send email to user
-    try {
-      await sendMail({
-        email: user.email,
-        subject: "Activate your Vendora account",
-        html: templates.userActivation({ name: user.name, activationUrl }),
-        message: `Hello ${user.name}, please click on the link to activate your account: ${activationUrl}`,
-      });
-      res.status(201).json({
-        success: true,
-        message: `please check your email:- ${user.email} to activate your account!`,
-      });
-    } catch (err) {
-      return next(new ErrorHandler(err.message, 500));
-    }
+    // send email to user (fail-soft — email outages must not block registration)
+    await sendMail({
+      email: user.email,
+      subject: "Activate your Vendora account",
+      html: templates.userActivation({ name: user.name, activationUrl }),
+      message: `Hello ${user.name}, please click on the link to activate your account: ${activationUrl}`,
+    });
+    res.status(201).json({
+      success: true,
+      message: `please check your email:- ${user.email} to activate your account!`,
+    });
   } catch (err) {
     return next(new ErrorHandler(err.message, 400));
   }
@@ -97,7 +93,16 @@ router.post(
       });
       sendToken(user, 201, res);
     } catch (error) {
-      return next(new ErrorHandler(error.message, 500));
+      // invalid/expired activation tokens are a client error → 400, not 500
+      const isTokenError =
+        error.name === "JsonWebTokenError" || error.name === "TokenExpiredError";
+      const status = isTokenError ? 400 : 500;
+      const message = isTokenError
+        ? error.name === "TokenExpiredError"
+          ? "Activation link has expired. Please register again."
+          : "Invalid activation token."
+        : error.message;
+      return next(new ErrorHandler(message, status));
     }
   })
 );

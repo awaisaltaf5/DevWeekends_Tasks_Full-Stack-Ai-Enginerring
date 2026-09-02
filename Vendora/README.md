@@ -117,6 +117,18 @@ cd frontend && npm install && npm start
 
 Open http://localhost:3000. API runs at http://localhost:8000, socket at ws://localhost:4000.
 
+### 4. Seed demo data (optional)
+
+Populates the marketplace with 10 realistic shops and 78 real-product mock listings (7–8 per category) with matching Unsplash photos fetched server-side:
+
+```bash
+cd backend
+npm run seed        # creates shops + products; resumable — tops up missing items, never duplicates
+node seed/verify.js # checks counts, image coverage, duplicate images
+```
+
+Requires `UNSPLASH_ACCESS_KEY` in `backend/config/.env` (backend-only; the key is never exposed to the frontend — only image URLs are stored in MongoDB). Results are cached in `backend/seed/.unsplash-cache.json` to stay within API rate limits. Seeding is safe to re-run at any time and never runs automatically on server start.
+
 ## Service Setup Guides
 
 ### MongoDB Atlas

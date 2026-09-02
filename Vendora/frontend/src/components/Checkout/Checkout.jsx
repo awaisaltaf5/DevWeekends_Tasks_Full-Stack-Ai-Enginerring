@@ -169,8 +169,8 @@ const ShippingInfo = ({
             <h5 className="text-[18px] font-[500]">Shipping Address</h5>
             <br />
             <form>
-                <div className="w-full flex pb-3">
-                    <div className="w-[50%]">
+                <div className="w-full flex flex-col md:flex-row pb-3">
+                    <div className="w-full md:w-[50%]">
                         <label className="block pb-2">Full Name</label>
                         <input
                             type="text"
@@ -179,7 +179,7 @@ const ShippingInfo = ({
                             className={`${styles.input} !w-[95%]`}
                         />
                     </div>
-                    <div className="w-[50%]">
+                    <div className="w-full md:w-[50%]">
                         <label className="block pb-2">Email Address</label>
                         <input
                             type="email"
@@ -190,8 +190,8 @@ const ShippingInfo = ({
                     </div>
                 </div>
 
-                <div className="w-full flex pb-3">
-                    <div className="w-[50%]">
+                <div className="w-full flex flex-col md:flex-row pb-3">
+                    <div className="w-full md:w-[50%]">
                         <label className="block pb-2">Phone Number</label>
                         <input
                             type="number"
@@ -200,7 +200,7 @@ const ShippingInfo = ({
                             className={`${styles.input} !w-[95%]`}
                         />
                     </div>
-                    <div className="w-[50%]">
+                    <div className="w-full md:w-[50%]">
                         <label className="block pb-2">Zip Code</label>
                         <input
                             type="number"
@@ -212,8 +212,8 @@ const ShippingInfo = ({
                     </div>
                 </div>
 
-                <div className="w-full flex pb-3">
-                    <div className="w-[50%]">
+                <div className="w-full flex flex-col md:flex-row pb-3">
+                    <div className="w-full md:w-[50%]">
                         <label className="block pb-2">Country</label>
                         <select
                             className="w-[95%] border h-[40px] rounded-[5px]"
@@ -231,7 +231,7 @@ const ShippingInfo = ({
                                 ))}
                         </select>
                     </div>
-                    <div className="w-[50%]">
+                    <div className="w-full md:w-[50%]">
                         <label className="block pb-2">City</label>
                         <select
                             className="w-[95%] border h-[40px] rounded-[5px]"
@@ -251,8 +251,8 @@ const ShippingInfo = ({
                     </div>
                 </div>
 
-                <div className="w-full flex pb-3">
-                    <div className="w-[50%]">
+                <div className="w-full flex flex-col md:flex-row pb-3">
+                    <div className="w-full md:w-[50%]">
                         <label className="block pb-2">Address1</label>
                         <input
                             type="address"
@@ -262,7 +262,7 @@ const ShippingInfo = ({
                             className={`${styles.input} !w-[95%]`}
                         />
                     </div>
-                    <div className="w-[50%]">
+                    <div className="w-full md:w-[50%]">
                         <label className="block pb-2">Address2</label>
                         <input
                             type="address"
