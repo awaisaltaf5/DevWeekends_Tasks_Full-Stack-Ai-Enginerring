@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { server } from "../server";
 import axios from 'axios';
+import { AiOutlineArrowLeft } from "react-icons/ai";
 
 
 const SellerActivationPage = () => {
@@ -35,15 +36,24 @@ const SellerActivationPage = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
+                flexDirection: "column",
+                gap: "1rem",
+                background: "#f9fafb",
             }}>
             {
                 error ? (
-                    <p className='text-red-800'>Your toke is expair </p>
+                    <p className='text-red-800'>Your token is expired or invalid.</p>
                 ) : (
-                    <p className='text-green-800'>Your Account has been created sucess fully!</p>
+                    <p className='text-green-800'>Your Account has been created successfully!</p>
                 )
             }
-
+            <Link
+                to="/"
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md"
+            >
+                <AiOutlineArrowLeft size={16} />
+                Back to Home
+            </Link>
         </div>
     )
 }
