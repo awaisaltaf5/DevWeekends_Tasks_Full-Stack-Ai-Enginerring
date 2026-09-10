@@ -221,6 +221,7 @@ router.post(
           try {
             if (req.user.email) {
               await sendMail({
+                template: "order",
                 email: req.user.email,
                 subject: `Vendora — Order confirmed (#${order._id})`,
                 html: templates.orderConfirmation({
@@ -233,6 +234,7 @@ router.post(
             }
             if (shop?.email) {
               await sendMail({
+                template: "order",
                 email: shop.email,
                 subject: "Vendora — New order received",
                 html: templates.sellerNewOrder({

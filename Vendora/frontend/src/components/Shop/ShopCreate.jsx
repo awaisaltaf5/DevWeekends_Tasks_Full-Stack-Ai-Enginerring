@@ -13,9 +13,9 @@ const ShopCreate = () => {
     const navigate = useNavigate()
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
-    const [phoneNumber, setPhoneNumber] = useState();
+        const [phoneNumber, setPhoneNumber] = useState("");
     const [address, setAddress] = useState("");
-    const [zipCode, setZipCode] = useState();
+    const [zipCode, setZipCode] = useState("");
     const [avatar, setAvatar] = useState();
     const [password, setPassword] = useState("");
     const [visible, setVisible] = useState(false);
@@ -62,6 +62,13 @@ const ShopCreate = () => {
 
         const renderGoogleButton = () => {
             if (window.google?.accounts?.id && googleButtonRef.current) {
+                // GSI requires initialize() before renderButton(); otherwise it logs
+                // "Failed to render button before calling initialize()" and the button
+                // never renders. Mirrors the working Login.jsx flow.
+                window.google.accounts.id.initialize({
+                    client_id: clientId,
+                    callback: handleGoogleResponse,
+                });
                 window.google.accounts.id.renderButton(googleButtonRef.current, {
                     theme: "outline",
                     size: "large",

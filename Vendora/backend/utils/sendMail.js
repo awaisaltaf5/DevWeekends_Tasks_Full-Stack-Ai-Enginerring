@@ -1,5 +1,35 @@
 const nodemailer = require("nodemailer");
 
+// @emailjs/nodejs is optional — EmailJS is the PRIMARY transport only when
+// EMAILJS_SERVICE_ID + EMAILJS_PUBLIC_KEY are present in the environment.
+let emailjs = null;
+let emailjsInitialized = false;
+        try {
+  emailjs = require("@emailjs/nodejs");
+} catch (_) {
+  /* SDK not installed — EmailJS transport stays unavailable; SMTP still works. */
+}
+
+const initEmailJS = () => {
+  if (emailjsInitialized) return true;
+  if (
+    emailjs &&
+    process.env.EMAILJS_SERVICE_ID &&
+    process.env.EMAILJS_PUBLIC_KEY
+  ) {
+        try {
+            emailjs.init({
+              publicKey: process.env.EMAILJS_PUBLIC_KEY,
+              privateKey: process.env.EMAILJS_PRIVATE_KEY,
+      });
+      emailjsInitialized = true;
+    } catch (e) {
+      console.error("[mail] EmailJS init failed:", e.message);
+    }
+  }
+  return emailjsInitialized;
+};
+
 /**
  * Production-grade SMTP helper.
  *
@@ -51,7 +81,7 @@ function getTransporter() {
 
     // Never keep a broken pool forever — throw it away so the next send rebuilds it.
     cachedTransporter.on("error", () => {
-      try {
+        try {
         cachedTransporter && cachedTransporter.close();
       } catch (_) {
         /* ignore */
@@ -66,70 +96,164 @@ function getTransporter() {
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const isRetryable = (err) => {
+  if (!err) return false;
   const code = String(err && (err.code || err.responseCode) || "");
-  // TLS/connect/handshake breakdowns and server 4xx (transient) are retryable.
+  // TLS/connect/handshake breakdowns, DNS, refused, rate-limit, and transient
+  // 4xx/5xx (incl. 429) are retryable; permanent 4xx is not.
   return (
-    /ECONNECTION|ECONNRESET|ETIMEDOUT|ESOCKET|ETLS/i.test(code) ||
+    /ECONNECTION|ECONNRESET|ETIMEDOUT|ESOCKET|ETLS|ECONNREFUSED|EAI_AGAIN/i.test(code) ||
     /^4\d\d$/.test(code) ||
-    /socket hang up|host not found|connection/i.test(err && err.message || "")
+    /^429$/.test(code) ||
+    /^5\d\d$/.test(code) ||
+    /socket hang up|host not found|connection|timed out|timeout|rate limit|429/i.test(
+      err && err.message || ""
+    )
   );
 };
 
 /**
  * Send an email with retries and fail-soft support.
+ *
+ * Transport selection (first available wins):
+ *   1. EmailJS HTTP API  — when EMAILJS_SERVICE_ID + EMAILJS_PUBLIC_KEY + a
+ *      template id are configured. The recipient, subject and HTML body are
+ *      passed as template params to a simple EmailJS template that renders
+ *      {{user_email}} / {{subject}} / {{message_html}}.
+ *   2. SMTP (Brevo etc.) — pooled nodemailer fallback (see getTransporter()).
+ *
  * @param {object} options
- * @param {string} options.email   recipient
+ * @param {string} options.email              recipient
  * @param {string} options.subject
- * @param {string} [options.message] plain-text body
- * @param {string} [options.html]    html body
- * @param {boolean} [options.throws=false] if true, throw on final failure (blocking);
- *        if false (default) log a warning and resolve — callers should NOT fail the
- *        whole request just because a transient email error occurred.
+ * @param {string} [options.message]          plain-text body
+ * @param {string} [options.html]             html body
+ * @param {string} [options.templateId]       override the default EmailJS template id
+ * @param {object} [options.templateParams]   extra vars merged into EmailJS template_params
+ * @param {boolean} [options.throws=false]    if true, throw on final failure (blocking);
+ *        if false (default) log and resolve — callers should NOT fail the whole
+ *        request just because a transient email error occurred.
  */
 const sendMail = async (options) => {
-  const transporter = getTransporter();
-
-  const from =
-    (process.env.EMAIL_FROM && process.env.EMAIL_FROM.trim()) ||
-    process.env.SMTP_USER;
-
-  const mailOptions = {
-    from,
-    to: options.email,
-    subject: options.subject,
-    ...(options.html
-      ? { html: options.html, text: options.message || undefined }
-      : { text: options.message }),
-  };
-
+  const shouldThrow = options.throws === true;
+  const recipient = options.email;
+  const subject = options.subject;
+  const messageHtml = options.html || options.message || "";
   let lastErr;
-  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-    try {
-      const info = await transporter.sendMail(mailOptions);
-      if (attempt > 1) {
-        console.log(
-          `[mail] delivered on attempt ${attempt}/${MAX_ATTEMPTS} to ${options.email}`
-        );
+
+  // ---- 1) EmailJS HTTP API (primary) ----
+  if (recipient && initEmailJS()) {
+        const templateId =
+      options.templateId ||
+      (options.template === "order"
+        ? process.env.EMAILJS_TEMPLATE_ORDER || process.env.EMAILJS_TEMPLATE_DEFAULT
+        : process.env.EMAILJS_TEMPLATE_DEFAULT);
+    console.log(
+      `[mail] EmailJS template=${templateId} flow=${options.template || "default"} to=${recipient}`
+    );
+    if (templateId) {
+      const templateParams = {
+        user_email: recipient,
+        subject: subject || "",
+        message_html: messageHtml,
+        ...(options.templateParams || {}),
+      };
+
+      for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+        try {
+          await emailjs.send(
+            process.env.EMAILJS_SERVICE_ID,
+            templateId,
+            templateParams,
+            {
+              publicKey: process.env.EMAILJS_PUBLIC_KEY,
+              privateKey: process.env.EMAILJS_PRIVATE_KEY,
+            }
+          );
+          if (attempt > 1) {
+            console.log(
+              `[mail] EmailJS delivered on attempt ${attempt}/${MAX_ATTEMPTS} to ${recipient}`
+            );
+          }
+          return { provider: "emailjs", to: recipient };
+          } catch (err) {
+          lastErr = err;
+          const retryable = isRetryable(err);
+          const errDetail = err && typeof err === "object"
+            ? JSON.stringify(err)
+            : String(err);
+          console.warn(
+            `[mail] EmailJS attempt ${attempt}/${MAX_ATTEMPTS} failed for ${recipient} ` +
+              `(retryable=${retryable}): ${err.message || errDetail}`
+          );
+          if (!retryable || attempt === MAX_ATTEMPTS) break;
+          await sleep(BASE_DELAY_MS * 2 ** (attempt - 1)); // 0.5s, 1s, 2s, 4s
+        }
       }
-      return info;
-    } catch (err) {
-      lastErr = err;
-      const retryable = isRetryable(err);
+      // EmailJS exhausted retries — fall through to SMTP fallback below.
       console.warn(
-        `[mail] attempt ${attempt}/${MAX_ATTEMPTS} failed for ${options.email} ` +
-          `(retryable=${retryable}): ${err.message}`
+        `[mail] EmailJS failed for ${recipient}; falling back to SMTP`
       );
-      if (!retryable || attempt === MAX_ATTEMPTS) break;
-      await sleep(BASE_DELAY_MS * 2 ** (attempt - 1)); // 0.5s, 1s, 2s, 4s
+    }
+  }
+
+  // ---- 2) SMTP / Brevo fallback (pooled nodemailer) ----
+  let transporter = null;
+        try {
+    transporter = getTransporter();
+  } catch (e) {
+    transporter = null; // SMTP not configured
+  }
+
+  if (transporter) {
+    const from =
+      (process.env.EMAIL_FROM && process.env.EMAIL_FROM.trim()) ||
+      process.env.SMTP_USER;
+
+    const mailOptions = {
+      from,
+      to: recipient,
+      subject,
+      ...(options.html
+        ? { html: options.html, text: options.message || undefined }
+        : { text: options.message }),
+    };
+
+      for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+        try {
+        const info = await transporter.sendMail(mailOptions);
+        if (attempt > 1) {
+          console.log(
+            `[mail] SMTP delivered on attempt ${attempt}/${MAX_ATTEMPTS} to ${recipient}`
+          );
+        }
+        return info;
+          } catch (err) {
+        lastErr = err;
+        const retryable = isRetryable(err);
+        console.warn(
+          `[mail] SMTP attempt ${attempt}/${MAX_ATTEMPTS} failed for ${recipient} ` +
+            `(retryable=${retryable}): ${err.message}`
+        );
+        if (!retryable || attempt === MAX_ATTEMPTS) break;
+        await sleep(BASE_DELAY_MS * 2 ** (attempt - 1)); // 0.5s, 1s, 2s, 4s
+      }
     }
   }
 
   // Fail-soft by default: surface the error to the caller but don't crash flows.
-  if (options.throws) throw lastErr;
-  console.error(
-    `[mail] FAILED after ${MAX_ATTEMPTS} attempts to ${options.email}: ` +
-      (lastErr && lastErr.message)
-  );
+  if (lastErr) {
+    if (shouldThrow) throw lastErr;
+    console.error(
+      `[mail] FAILED after retries to ${recipient}: ` +
+        (lastErr && lastErr.message)
+    );
+  } else {
+    const cfgErr = new Error(
+      "No mail transport configured. Set EMAILJS_SERVICE_ID/EMAILJS_PUBLIC_KEY " +
+        "(and EMAILJS_TEMPLATE_DEFAULT) or SMTP_HOST/SMTP_PORT/SMTP_USER/SMTP_PASS in your .env."
+    );
+    if (shouldThrow) throw cfgErr;
+    console.error("[mail]", cfgErr.message);
+  }
   return null;
 };
 

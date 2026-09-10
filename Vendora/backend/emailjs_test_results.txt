@@ -1,0 +1,4 @@
+RESULTS:
+warm-up provider=emailjs
+10/10 via emailjs=10/10 (ms=2787)
+30/30 via emailjs=13/30 (ms=7226)
