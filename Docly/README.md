@@ -1,62 +1,94 @@
 # Docly
 
-Docly is a full-stack doctor booking and telemedicine platform. Patients discover doctors and book in-person or video consultations, doctors manage their practice, and administrators operate the platform from a protected dashboard.
+> **Care, connected.** A full-stack doctor discovery, appointment booking, and telemedicine platform built to make healthcare access feel less fragmented.
 
-## Features
+[![React](https://img.shields.io/badge/React-19-149eca?logo=react&logoColor=white)](frontend/package.json)
+[![TypeScript](https://img.shields.io/badge/TypeScript-7-3178c6?logo=typescript&logoColor=white)](backend/package.json)
+[![Express](https://img.shields.io/badge/API-Express_5-111827?logo=express&logoColor=white)](backend/package.json)
+[![MongoDB](https://img.shields.io/badge/Data-MongoDB_Atlas-47a248?logo=mongodb&logoColor=white)](backend/package.json)
 
-- Doctor discovery with search, location, specialty, fee, rating, experience, and pagination filters
-- Appointment booking with availability validation and MongoDB double-booking protection
-- Video consultations with appointment-specific Jitsi rooms and server-generated tokens
-- Patient medical record uploads and permission-aware access
-- Doctor dashboard for profile, availability, appointments, patients, and notes
-- Admin dashboard for metrics, doctor verification, user access, appointments, and specialty CRUD
-- MongoDB in-app notifications for appointment and account events
-- Brevo SMTP email notifications with reusable booking, cancellation, status, and approval templates
-- Responsive healthcare UI with loading, empty, error, confirmation, focus, and reduced-motion states
+## Why Docly?
 
-## User Roles
+Finding the right doctor, confirming availability, sharing medical context, and joining a remote consultation often means moving between disconnected tools. Docly brings that journey into one role-aware workspace:
 
-| Role | Capabilities |
-| --- | --- |
-| Patient | Discover doctors, book/cancel appointments, join consultations, manage records and prescriptions |
-| Doctor | Maintain profile and availability, manage appointments, update statuses, write notes and prescriptions |
-| Admin | View platform metrics, approve/reject doctors, manage users, appointments, and specialties |
+**Discover a doctor -> book a time -> receive updates -> meet securely -> continue care.**
 
-Admin registration is disabled. Create an admin with `npm run seed:admin` and the `ADMIN_*` variables.
+Patients get a clear path to care. Doctors get a focused practice workspace. Admins get the operational visibility needed to keep the platform trustworthy.
+
+## What It Solves
+
+- **Scattered discovery:** Search doctors by specialty, location, fee, rating, and experience from one place.
+- **Booking friction:** Validate availability and protect appointments from double booking before confirmation.
+- **Disconnected consultations:** Generate appointment-specific video rooms with Jitsi and let authorized attendees join from the appointment flow.
+- **Missing context:** Keep permission-aware medical records, prescriptions, doctor notes, and notifications connected to the care journey.
+- **Operational blind spots:** Give administrators tools for doctor verification, user access, platform metrics, appointments, and specialty management.
+
+## Product Highlights
+
+### For patients
+
+- Browse and filter verified doctor profiles.
+- Book, review, and cancel appointments.
+- Join in-person or video consultations.
+- Upload medical records and view prescriptions shared with them.
+- Receive in-app and email updates about important appointment events.
+
+### For doctors
+
+- Build a professional profile with specialties, fees, experience, and availability.
+- Manage upcoming appointments and update their status.
+- Review patient context, add notes, and issue prescriptions.
+- Access a dashboard designed around the daily practice workflow.
+
+### For administrators
+
+- Review and approve doctor applications.
+- Monitor platform metrics and appointment activity.
+- Manage users, specialties, and operational access from protected routes.
 
 ## Technology Stack
 
-- Frontend: React 19, Vite, TypeScript, React Router, Axios, Tailwind CSS, Lucide React
-- Backend: Node.js, Express 5, TypeScript, Mongoose, MongoDB Atlas, JWT, bcryptjs
-- Integrations: Jitsi as a Service, Brevo SMTP/Nodemailer, Cloudinary, Nominatim, optional Unsplash
-- Tooling: npm, tsx, strict TypeScript builds
+| Layer | Technologies |
+| --- | --- |
+| Frontend | React 19, Vite 8, TypeScript, React Router 7, Axios, Tailwind CSS 4, Lucide React |
+| Backend | Node.js, Express 5, TypeScript, Mongoose, REST API |
+| Data and security | MongoDB Atlas, JWT, bcryptjs, role-based authorization, request validation |
+| Integrations | Jitsi as a Service, Brevo SMTP/Nodemailer, Resend fallback, Cloudinary, Nominatim, optional Unsplash |
+| Developer experience | root npm orchestration scripts, `tsx`, strict TypeScript builds, smoke and auth-flow scripts |
 
 ## Architecture
 
 ```text
 Docly/
 ├── frontend/src/
-│   ├── components/       reusable layout, auth, dashboard, doctor, record and UI components
-│   ├── pages/            route-level patient, doctor, video and admin screens
-│   ├── services/         typed Axios API clients
-│   ├── context/          authentication state
-│   └── types/            shared frontend DTOs
+│   ├── components/       reusable UI, auth, layout, doctor, dashboard and record components
+│   ├── pages/             patient, doctor, video and admin screens
+│   ├── services/          typed Axios API clients
+│   ├── context/           authentication state
+│   └── types/             frontend DTOs and domain types
 ├── backend/src/
-│   ├── config/           environment and database configuration
-│   ├── controllers/      request handlers, including adminController
-│   ├── middleware/       JWT protection, role authorization, uploads and errors
-│   ├── models/           users, doctors, specialties, appointments, records, prescriptions, notifications
-│   ├── routes/           feature routers mounted under /api
-│   ├── services/         availability, email, Jitsi, notifications and domain services
-│   └── scripts/          seed, admin seed, smoke and auth verification
+│   ├── controllers/       feature-specific request handlers
+│   ├── middleware/        auth, roles, uploads and error handling
+│   ├── models/            users, doctors, appointments, records and notifications
+│   ├── routes/             REST routers mounted under /api
+│   ├── services/           availability, email, video, notifications and domain logic
+│   └── scripts/            seed, admin seed, smoke and auth verification
 └── README.md
 ```
 
-## Installation
+The backend keeps authentication, authorization, validation, controllers, and domain services separate. This makes sensitive workflows such as appointment access, medical records, and admin operations easier to reason about and extend.
 
-Prerequisites: Node.js 20+, npm, and a MongoDB Atlas database.
+## Quick Start
 
-```bash
+### Prerequisites
+
+- Node.js 20 or newer
+- npm
+- A MongoDB Atlas database
+
+### 1. Configure the API
+
+```powershell
 cd backend
 npm install
 copy .env.example .env
@@ -65,96 +97,87 @@ npm run seed:admin
 npm run dev
 ```
 
-In a second terminal:
+### 2. Start the frontend
 
-```bash
+Open a second terminal:
+
+```powershell
 cd frontend
 npm install
 copy .env.example .env
 npm run dev
 ```
 
-The default development URLs are `http://localhost:5000` for the API and `http://localhost:3000` for the frontend.
+The default development URLs are:
 
-## Environment Variables
+- Frontend: `http://localhost:3000`
+- API: `http://localhost:5000`
+- Health check: `http://localhost:5000/api/health`
 
-Never commit `.env` files or real credentials.
+Admin registration is disabled by design. Use `npm run seed:admin` with the `ADMIN_*` variables to create an administrator.
 
-```env
-MONGODB_URI=<MongoDB connection string>
-JWT_SECRET=<long random secret>
-JWT_EXPIRES_IN=7d
-PORT=5000
-NODE_ENV=development
-CLIENT_ORIGIN=http://localhost:3000
-CLIENT_URL=http://localhost:3000
+## Configuration
 
-ADMIN_NAME=<admin name>
-ADMIN_EMAIL=<admin email>
-ADMIN_PASSWORD=<admin password>
+Never commit `.env` files or real credentials. The complete templates are available at [backend/.env.example](backend/.env.example) and [frontend/.env.example](frontend/.env.example).
 
-JITSI_APP_ID=<JaaS application ID>
-JITSI_APP_SECRET=<JaaS application secret>
-JITSI_DOMAIN=8x8.vc
+The backend configuration covers:
 
-SMTP_HOST=smtp-relay.brevo.com
-SMTP_PORT=587
-SMTP_USER=<Brevo SMTP login>
-SMTP_PASS=<Brevo SMTP key>
-EMAIL_FROM=Docly <verified sender>
+- MongoDB and JWT authentication
+- Frontend origin and API port
+- Seeded admin credentials
+- Jitsi application credentials
+- Brevo SMTP or Resend email delivery
+- Optional Cloudinary uploads and Unsplash imagery
 
-CLOUDINARY_CLOUD_NAME=<optional>
-CLOUDINARY_API_KEY=<optional>
-CLOUDINARY_API_SECRET=<optional>
-UNSPLASH_ACCESS_KEY=<optional>
-```
+Brevo SMTP is preferred when configured. Email failures are logged without interrupting appointment requests.
 
-Brevo SMTP is preferred when configured. Resend remains supported as an optional fallback through `RESEND_API_KEY`. Email failures are logged and never interrupt appointment requests.
+## API Surface
 
-## API Overview
+Protected requests use `Authorization: Bearer <JWT>`.
 
-All protected requests use `Authorization: Bearer <JWT>`.
-
-| Area | Endpoints | Access |
+| Area | Representative endpoints | Access |
 | --- | --- | --- |
-| Health/auth | `/api/health`, `/api/auth/register`, `/api/auth/login`, `/api/auth/me` | Public/authenticated |
-| Discovery | `/api/doctors`, `/api/doctors/:id`, `/api/specialties`, `/api/location/search` | Public |
-| Appointments | `/api/appointments`, `/api/appointments/me`, `/api/appointments/:id/cancel`, `/api/appointments/:id/status` | Patient/doctor |
-| Video | `/api/video/:appointmentId` | Attending patient/doctor |
+| Health and auth | `/api/health`, `/api/auth/register`, `/api/auth/login`, `/api/auth/me` | Public/authenticated |
+| Doctor discovery | `/api/doctors`, `/api/doctors/:id`, `/api/specialties`, `/api/location/search` | Public |
+| Appointments | `/api/appointments`, `/api/appointments/me`, `/api/appointments/:id/cancel` | Patient/doctor |
+| Video consultations | `/api/video/:appointmentId` | Attending patient/doctor |
 | Doctor workspace | `/api/doctor/*` | Doctor |
-| Medical | `/api/medical-records/*`, `/api/prescriptions/*` | Permission-aware |
+| Medical care | `/api/medical-records/*`, `/api/prescriptions/*` | Permission-aware |
 | Notifications | `/api/notifications`, `/api/notifications/read` | Authenticated |
-| Admin dashboard | `/api/admin/dashboard` | Admin |
-| Admin doctors/users | `/api/admin/doctors/*`, `/api/admin/users/*` | Admin |
-| Admin operations | `/api/admin/appointments/*`, `/api/admin/specialties/*` | Admin |
+| Administration | `/api/admin/*` | Admin |
 
-Every `/api/admin` route applies both JWT authentication and `authorize('admin')`.
+Every admin route applies both JWT authentication and the `admin` role guard.
 
-## Testing and Verification
+## Verification
 
-```bash
-cd backend
+Run the full local checks from the repository root:
+
+```powershell
 npm run typecheck
 npm run build
+```
+
+For backend workflow checks:
+
+```powershell
+cd backend
 npm run smoke
 npm run test:auth
-
-cd ../frontend
-npm run typecheck
-npm run build
 ```
 
-The auth integration test requires a working MongoDB connection. Manual acceptance coverage includes registration, login/logout, role guards, doctor discovery filters and pagination, booking/double-booking protection, status changes, cancellation, records, doctor availability/dashboard, admin approval, user management, and specialty CRUD.
+The auth integration test requires a working MongoDB connection. The verification scripts cover registration, login, role guards, discovery filters, appointment protection, cancellation, records, doctor availability, admin approval, and specialty management.
 
-## Screenshots
+## Roadmap
 
-Add production screenshots here:
+- Add production screenshots and a hosted demo link.
+- Expand automated integration coverage for medical-record permissions and appointment edge cases.
+- Add richer appointment reminders and calendar integrations.
+- Improve observability with structured audit events for sensitive administrative actions.
 
-- `docs/screenshots/patient-discovery.png`
-- `docs/screenshots/doctor-dashboard.png`
-- `docs/screenshots/admin-dashboard.png`
-- `docs/screenshots/video-consultation.png`
+## Deployment Notes
 
-## Deployment
+Build the backend as a Node service and the frontend as a static Vite application. Provision MongoDB Atlas, configure production secrets, set `CLIENT_ORIGIN` and `CLIENT_URL` to the deployed frontend, and provide production Jitsi credentials plus a verified email sender. Monitor `/api/health` after deployment.
 
-Deployment is environment-specific. Build both applications with the commands above, provision MongoDB Atlas, configure production secrets in the hosting provider, set `CLIENT_ORIGIN` and `CLIENT_URL` to the deployed frontend, and configure a verified Brevo sender plus Jitsi production credentials. Deploy the backend as a Node service and the frontend as a static Vite application. Add health monitoring for `/api/health`.
+## License
+
+This project is currently distributed without a public license. Add a license before publishing it for external reuse.
