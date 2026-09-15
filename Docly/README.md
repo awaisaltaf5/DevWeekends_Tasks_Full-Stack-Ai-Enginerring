@@ -176,7 +176,7 @@ The auth integration test requires a working MongoDB connection. The verificatio
 
 ## Deployment Notes
 
-Build the backend as a Node service and the frontend as a static Vite application. Provision MongoDB Atlas, configure production secrets, set `CLIENT_ORIGIN` and `CLIENT_URL` to the deployed frontend, and provide production Jitsi credentials plus a verified email sender. Monitor `/api/health` after deployment.
+Build the backend as a  Node service and the frontend as a static Vite application. Provision MongoDB Atlas, configure production secrets, set `CLIENT_ORIGIN` and `CLIENT_URL` to the deployed frontend, and provide production Jitsi credentials plus a verified email sender. Monitor `/api/health` after deployment .
 
 ## License
 
