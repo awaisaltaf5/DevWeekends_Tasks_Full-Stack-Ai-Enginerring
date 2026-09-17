@@ -87,6 +87,18 @@ The Admin Portal will run on `http://localhost:3001` (separate from the public f
 npm run build
 ```
 
+### Health Monitoring
+
+This repository is a static frontend deployment. Its lightweight liveness check is:
+
+```
+GET https://<admin-portal-domain>/health.json
+```
+
+The response is a small JSON document with `status: "ok"`. It performs no database query and has no frontend timer or background process. The backend is a separate deployment; monitor its own `GET /api/health` endpoint there if that route is implemented by the backend.
+
+For external monitoring, create an HTTP check in a service such as UptimeRobot or Better Uptime for the deployed `health.json` URL. Expect HTTP `200` and, when supported, assert that the response contains `"status":"ok"`. A 24-hour interval is appropriate for basic deployment liveness; use 1-2 hours instead when faster outage detection is required by the hosting/service requirements. Review the monitor's request history and alert delivery after creating it.
+
 ### Type Check
 
 ```bash
