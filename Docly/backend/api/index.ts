@@ -16,10 +16,16 @@ declare global {
 const app = createApp();
 
 export default async function handler(req: any, res: any) {
+  // Health is a liveness check and must remain available when MongoDB is down.
+  // It reports the current connection state without opening a new connection
+  // or issuing a database query.
+  const requestPath = new URL(req.url ?? '/', 'http://localhost').pathname.replace(/\/+$/, '');
+  const isHealthRequest = req.method === 'GET' && requestPath === '/api/health';
+
   // Ensure MongoDB is initialized before handling the request. connectDB() is
   // idempotent (it no-ops when the connection is already live), so the global
   // flag here is only a fast-path check; the real guard is in db.ts.
-  if (globalThis.__doclyDbConnected !== true) {
+  if (!isHealthRequest && globalThis.__doclyDbConnected !== true) {
     const connected = await connectDB();
     if (connected) {
       globalThis.__doclyDbConnected = true;

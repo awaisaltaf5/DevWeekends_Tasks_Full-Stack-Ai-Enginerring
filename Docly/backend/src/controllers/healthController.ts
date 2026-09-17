@@ -2,7 +2,6 @@ import { type Request, type Response } from 'express';
 import mongoose from 'mongoose';
 import { sendSuccess } from '../utils/apiResponse';
 import { hasMongoUri } from '../config/env';
-import { getDbError } from '../config/db';
 
 /**
  * GET /api/health — lightweight smoke endpoint.
@@ -35,7 +34,6 @@ export const health = (_req: Request, res: Response): Response => {
     status: 'ok',
     database: dbState,
     dbConfigured: configured,
-    dbError: dbState !== 'connected' ? (getDbError() ?? null) : null,
     timestamp: new Date().toISOString(),
   });
 };
