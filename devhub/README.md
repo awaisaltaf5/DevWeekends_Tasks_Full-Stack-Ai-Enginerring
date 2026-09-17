@@ -197,6 +197,18 @@ Open:
 http://localhost:5173
 ```
 
+## Production Health Monitoring
+
+DevHub is a frontend-only Vite application, so it does not expose a backend `/api/health` endpoint or use a database. The production health target is the deployed frontend URL:
+
+```http
+GET https://devhub-nu-five.vercel.app/
+```
+
+The [production health check workflow](.github/workflows/health-check.yml) runs an external HTTP check every two days and can also be started with GitHub Actions `workflow_dispatch`. It expects a successful HTTP response within 20 seconds and retries transient failures twice. No environment variable or secret is required.
+
+To verify the scheduled check, open the repository's **Actions** tab, select **Production health check**, and inspect the latest run. Use **Run workflow** for an immediate check; a successful run confirms the deployed URL returned a 2xx response.
+
 ---
 
 # 🌐 API Reference

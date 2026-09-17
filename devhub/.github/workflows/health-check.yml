@@ -1,0 +1,16 @@
+name: Production health check
+
+on:
+  schedule:
+    - cron: '0 3 */2 * *'
+  workflow_dispatch:
+
+jobs:
+  check-production:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Check deployed frontend
+        env:
+          MONITOR_URL: https://devhub-nu-five.vercel.app/
+        run: curl --fail --silent --show-error --location --max-time 20 --retry 2 --retry-delay 5 "$MONITOR_URL" > /dev/null
