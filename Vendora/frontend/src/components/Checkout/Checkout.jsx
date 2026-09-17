@@ -27,8 +27,8 @@ const Checkout = () => {
     }, []);
 
     const paymentSubmit = () => {
-        if (address1 === "" || address2 === "" || zipCode === null || country === "" || city === "") {
-            toast.error("Please choose your delivery address!")
+        if (address1 === "" || zipCode === null || country === "" || city === "") {
+            toast.error("Please complete your delivery address.");
         } else {
             const shippingAddress = {
                 address1,
@@ -67,36 +67,31 @@ const Checkout = () => {
         e.preventDefault();
         const name = couponCode;
 
-        await axios.get(`${server}/coupon/get-coupon-value/${name}`).then((res) => {
+        try {
+            const { data } = await axios.get(`${server}/coupon/get-coupon-value/${name}`);
+            const coupon = data.couponCode;
 
-            const shopId = res.data.couponCode?.shopId;
-
-            const couponCodeValue = res.data.couponCode?.value;
-
-            if (res.data.couponCode !== null) {
-                const isCouponValid =
-                    cart && cart.filter((item) => item.shopId === shopId);
-
-                if (isCouponValid.length === 0) {
-                    toast.error("Coupon code is not valid for this shop");
-                    setCouponCode("");
-                } else {
-
-                    const eligiblePrice = isCouponValid.reduce(
-                        (acc, item) => acc + item.qty * item.discountPrice,
-                        0
-                    );
-                    const discountPrice = (eligiblePrice * couponCodeValue) / 100;
-                    setDiscountPrice(discountPrice);
-                    setCouponCodeData(res.data.couponCode);
-                    setCouponCode("");
-                }
+            if (!coupon) {
+                toast.error("Coupon code does not exist.");
+                return;
             }
-            if (res.data.couponCode === null) {
-                toast.error("Coupon code doesn't exists!");
-                setCouponCode("");
+
+            const eligibleItems = cart.filter((item) => item.shopId === coupon.shopId);
+            if (eligibleItems.length === 0) {
+                toast.error("Coupon code is not valid for this shop.");
+                return;
             }
-        });
+
+            const eligiblePrice = eligibleItems.reduce(
+                (acc, item) => acc + item.qty * item.discountPrice,
+                0
+            );
+            setDiscountPrice((eligiblePrice * coupon.value) / 100);
+            setCouponCodeData(coupon);
+            setCouponCode("");
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Could not apply coupon. Please try again.");
+        }
     };
 
     const discountPercentenge = couponCodeData ? discountPrice : "";
@@ -139,12 +134,13 @@ const Checkout = () => {
                     />
                 </div>
             </div>
-            <div
+            <button
+                type="button"
                 className={`${styles.button} w-[150px] 800px:w-[280px] mt-10`}
                 onClick={paymentSubmit}
             >
                 <h5 className="text-white">Go to Payment</h5>
-            </div>
+            </button>
         </div>
     );
 };
@@ -176,6 +172,8 @@ const ShippingInfo = ({
                             type="text"
                             value={user && user.name}
                             required
+                            readOnly
+                            aria-readonly="true"
                             className={`${styles.input} !w-[95%]`}
                         />
                     </div>
@@ -185,6 +183,8 @@ const ShippingInfo = ({
                             type="email"
                             value={user && user.email}
                             required
+                            readOnly
+                            aria-readonly="true"
                             className={`${styles.input}`}
                         />
                     </div>
@@ -197,6 +197,8 @@ const ShippingInfo = ({
                             type="number"
                             required
                             value={user && user.phoneNumber}
+                            readOnly
+                            aria-readonly="true"
                             className={`${styles.input} !w-[95%]`}
                         />
                     </div>
@@ -232,14 +234,14 @@ const ShippingInfo = ({
                         </select>
                     </div>
                     <div className="w-full md:w-[50%]">
-                        <label className="block pb-2">City</label>
+                        <label className="block pb-2">State / Province</label>
                         <select
                             className="w-[95%] border h-[40px] rounded-[5px]"
                             value={city}
                             onChange={(e) => setCity(e.target.value)}
                         >
                             <option className="block pb-2" value="">
-                                Choose your City
+                                Choose your state or province
                             </option>
                             {State &&
                                 State.getStatesOfCountry(country).map((item) => (
@@ -253,9 +255,9 @@ const ShippingInfo = ({
 
                 <div className="w-full flex flex-col md:flex-row pb-3">
                     <div className="w-full md:w-[50%]">
-                        <label className="block pb-2">Address1</label>
+                        <label className="block pb-2">Street address</label>
                         <input
-                            type="address"
+                            type="text"
                             required
                             value={address1}
                             onChange={(e) => setAddress1(e.target.value)}
@@ -263,12 +265,11 @@ const ShippingInfo = ({
                         />
                     </div>
                     <div className="w-full md:w-[50%]">
-                        <label className="block pb-2">Address2</label>
+                        <label className="block pb-2">Apartment, unit, etc. (optional)</label>
                         <input
-                            type="address"
+                            type="text"
                             value={address2}
                             onChange={(e) => setAddress2(e.target.value)}
-                            required
                             className={`${styles.input}`}
                         />
                     </div>
@@ -276,12 +277,17 @@ const ShippingInfo = ({
 
                 <div></div>
             </form>
-            <h5
-                className="text-[18px] cursor-pointer inline-block"
-                onClick={() => setUserInfo(!userInfo)}
-            >
-                Choose From saved address
-            </h5>
+            <div className="flex flex-wrap items-center gap-3">
+                <h5
+                    className="text-[18px] cursor-pointer inline-block"
+                    onClick={() => setUserInfo(!userInfo)}
+                >
+                    Choose From saved address
+                </h5>
+                <a className="text-[14px] text-[#f63b60]" href="/profile">
+                    Edit profile details
+                </a>
+            </div>
             {userInfo && (
                 <div>
                     {user &&
@@ -341,7 +347,7 @@ const CartData = ({
                 <input
                     type="text"
                     className={`${styles.input} h-[40px] pl-2`}
-                    placeholder="Coupoun code"
+                    placeholder="Coupon code"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
                     required
